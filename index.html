@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARD — Operação e Escala | Mentoria Estratégica em Negócios Digitais</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hard: {
+                            bg: '#0A0D0E',
+                            card: '#121619',
+                            panel: '#181E24',
+                            border: '#212930',
+                            emerald: '#10B981',
+                            darkEmerald: '#059669',
+                            neon: '#34D399',
+                            text: '#F9FAFB',
+                            muted: '#9CA3AF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0A0D0E;
+            color: #F9FAFB;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0D0E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #181E24;
+            border-radius: 4px;
+            border: 1px solid #212930;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10B981;
+        }
+        .emerald-glow {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+        }
+        .emerald-glow-sm {
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+        }
+        .border-emerald-glow {
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.05);
+        }
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-hard-bg text-hard-text min-h-screen flex flex-col antialiased">
+
+    <!-- WELCOME MODAL / ONBOARDING OVERLAY -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md bg-grid-pattern">
+        <div class="bg-hard-card border border-hard-border rounded-2xl p-6 md:p-10 max-w-2xl w-full emerald-glow relative shadow-2xl">
+            <div class="text-center mb-8">
+                <span class="text-xs font-semibold uppercase tracking-widest px-3 py-1 bg-hard-emerald/10 text-hard-neon border border-hard-emerald/20 rounded-full">Mentoria Estratégica</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold mt-4 mb-2 tracking-tight text-white">HARD<span class="text-hard-neon">.</span></h1>
+                <p class="text-lg text-hard-neon font-medium">Construa processos. Entenda os números. Melhore a operação.</p>
+                <p class="text-sm text-hard-muted mt-3 max-w-lg mx-auto">Esta é a etapa de transformar ações isoladas em um sistema de trabalho que você consegue medir, revisar e aprimorar de forma previsível.</p>
+            </div>
+
+            <form id="onboarding-form" onsubmit="handleOnboarding(event)" class="space-y-6">
+                <div>
+                    <label for="student-name" class="block text-xs font-semibold text-hard-muted uppercase tracking-wider mb-2">Seu Nome / Identificação do Negócio</label>
+                    <input type="text" id="student-name" required placeholder="Ex: Carlos Silva ou Growth Tech" class="w-full bg-hard-panel border border-hard-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-hard-emerald focus:ring-1 focus:ring-hard-emerald transition">
+                </div>
+
+                <div class="bg-hard-panel/50 border border-hard-border rounded-xl p-4 text-xs text-hard-muted space-y-2">
+                    <p class="font-semibold text-white flex items-center gap-2"><span>🛡️</span> Armazenamento e Privacidade:</p>
+                    <p>Todos os seus dados, simulações, anotações e contatos do CRM serão armazenados <strong>exclusivamente de forma local no seu navegador (localStorage)</strong>. Nenhuma informação é enviada a servidores externos.</p>
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald hover:from-hard-emerald hover:to-hard-neon text-black font-bold text-base rounded-xl transition duration-200 transform hover:-translate-y-0.5 shadow-lg flex items-center justify-center gap-2">
+                    <span>Entrar na HARD</span>
+                    <span>→</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container" class="hidden flex-1 flex flex-col md:flex-row min-h-screen">
+
+        <!-- SIDEBAR (DESKTOP) & TOPBAR (MOBILE) -->
+        <aside class="w-full md:w-72 bg-hard-card border-b md:border-b-0 md:border-r border-hard-border flex-shrink-0 flex flex-col justify-between">
+            <div>
+                <!-- Brand Header -->
+                <div class="p-6 border-b border-hard-border flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-black tracking-wider text-white">HARD<span class="text-hard-neon">.</span></h1>
+                        <p class="text-[10px] text-hard-muted tracking-widest uppercase mt-0.5">Operação e Escala</p>
+                    </div>
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-hard-neon animate-pulse"></span>
+                </div>
+
+                <!-- Student Info Badge -->
+                <div class="p-4 bg-hard-panel/40 border-b border-hard-border flex items-center justify-between">
+                    <div class="overflow-hidden">
+                        <p class="text-xs text-hard-muted">Líder Operacional</p>
+                        <p id="nav-student-name" class="text-sm font-bold text-white truncate">Carregando...</p>
+                    </div>
+                    <button onclick="resetDataPrompt()" title="Configurações / Reset" class="p-2 text-hard-muted hover:text-red-400 transition text-xs">
+                        ⚙️
+                    </button>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]" id="main-nav">
+                    <button onclick="navigate('dashboard')" data-nav="dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition bg-hard-emerald/10 text-hard-neon border border-hard-emerald/20">
+                        <span>📊</span> Visão Geral & Dashboard
+                    </button>
+                    <button onclick="navigate('modules')" data-nav="modules" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>📚</span> Módulos & Aulas (12)
+                    </button>
+                    <button onclick="navigate('tools')" data-nav="tools" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>🛠️</span> Central de Ferramentas
+                    </button>
+                    <button onclick="navigate('metrics')" data-nav="metrics" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>📈</span> Painel de Métricas
+                    </button>
+                    <button onclick="navigate('crm')" data-nav="crm" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>💼</span> CRM & Comercial
+                    </button>
+                    <button onclick="navigate('finance')" data-nav="finance" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>💰</span> DRE & Finanças
+                    </button>
+                    <button onclick="navigate('processes')" data-nav="processes" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>⚙️</span> SOPs & Processos
+                    </button>
+                    <button onclick="navigate('roadmap')" data-nav="roadmap" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>🗓️</span> Plano 30 Dias (Execução)
+                    </button>
+                    <button onclick="navigate('notes')" data-nav="notes" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>📝</span> Caderno de Anotações
+                    </button>
+                    <button onclick="navigate('backup')" data-nav="backup" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-left transition text-hard-muted hover:bg-hard-panel hover:text-white">
+                        <span>💾</span> Backup & Exportação
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Footer Stats -->
+            <div class="p-4 border-t border-hard-border bg-hard-panel/20 text-xs">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-hard-muted">Progresso Global</span>
+                    <span id="sidebar-progress-text" class="font-bold text-hard-neon">0%</span>
+                </div>
+                <div class="w-full bg-hard-panel rounded-full h-2 overflow-hidden border border-hard-border">
+                    <div id="sidebar-progress-bar" class="bg-hard-neon h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto bg-hard-bg p-4 md:p-8">
+            <div id="content-area" class="max-w-6xl mx-auto space-y-8">
+                <!-- DYNAMIC SECTIONS LOAD HERE -->
+            </div>
+        </main>
+
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-hard-card border border-hard-emerald text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Ação executada com sucesso!</span>
+    </div>
+
+    <!-- APPLICATION LOGIC & DATA SCRIPT -->
+    <script>
+        /* ==========================================================================
+           1. GLOBAL STATE & DATA STRUCTURES
+           ========================================================================== */
+        const APP_KEY = 'HARD_MENTORSHIP_STATE_V1';
+
+        const defaultState = {
+            studentName: '',
+            onboarded: false,
+            completedLessons: [], // array of lesson ids e.g., 'm1_l1'
+            lessonNotes: {}, // key: lesson_id, value: text
+            goals: [
+                { id: 1, text: 'Mapear a operação atual no Módulo 1', done: false },
+                { id: 2, text: 'Cadastrar os primeiros 5 leads no CRM', done: false },
+                { id: 3, text: 'Simular o ponto de equilíbrio no Módulo 9', done: false }
+            ],
+            metrics: {
+                investment: 0,
+                reach: 0,
+                clicks: 0,
+                leads: 0,
+                sales: 0,
+                revenue: 0,
+                costs: 0,
+                refunds: 0
+            },
+            crmLeads: [],
+            processes: [],
+            offers: [],
+            feedbacks: [],
+            experiments: [],
+            growth90: { targetRevenue: 0, mainBottleneck: '', keyMetric: '', actionPlan: '' },
+            execution30: {} // key: 'day_X', value: { done: bool, result: string }
+        };
+
+        let state = JSON.parse(localStorage.getItem(APP_KEY)) || defaultState;
+
+        function saveState() {
+            localStorage.setItem(APP_KEY, JSON.stringify(state));
+            updateGlobalProgressUI();
+        }
+
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+
+        /* ==========================================================================
+           2. CURRICULUM DATA (12 MODULES & COMPLETE LESSONS)
+           ========================================================================== */
+        const MODULES = [
+            {
+                id: 1,
+                title: "Mapeamento e Arquitetura do Negócio Digital",
+                icon: "🏛️",
+                desc: "Estruture o negócio como um sistema previsível de entrada, processamento e saída.",
+                tool: "map_op",
+                lessons: [
+                    { id: "m1_l1", title: "1. Como enxergar o negócio como um sistema", obj: "Compreender os 8 pilares da cadeia de valor digital.", content: "Um negócio digital não é uma coleção de postagens no Instagram ou anúncios soltos. É uma máquina composta por 8 subsistemas interconectados: Aquisição, Atenção, Oferta, Conversão, Entrega, Satisfação, Retenção e Resultado Financeiro. Se um elo falha, a energia e o dinheiro aplicados nos outros elos são desperdiçados. O papel do gestor HARD é mediar a passagem de bastão entre cada etapa.", ex: "Liste no papel quais desses 8 pilares você atualmente possui documentados com dados claros.", checklist: ["Identificar os 8 pilares na sua empresa", "Mapear onde há perda de dados", "Definir o responsável por cada pilar"] },
+                    { id: "m1_l2", title: "2. Mapeando a jornada do cliente de ponta a ponta", obj: "Desenhar os pontos de contato do cliente do desconhecido ao promotor.", content: "A jornada do cliente precisa ser documentada sem lacunas. Desde o primeiro impacto visual (anúncio/conteúdo) até o recebimento do produto e consumo de suporte. O erro comum é focar 90% da energia no momento da venda e 10% no pós-venda, gerando alto índice de churn (cancelamentos) e refunds.", ex: "Desenhe em tópicos os exatos passos que seu cliente dá do clique ao suporte.", checklist: ["Identificar primeiro ponto de contato", "Mapear onboarding", "Definir ponto de verificação de satisfação"] },
+                    { id: "m1_l3", title: "3. Como identificar gargalos que limitam o crescimento", obj: "Localizar a etapa com menor eficiência operacional.", content: "A Teoria das Restrições ensina que qualquer sistema produtivo possui apenas um gargalo principal por vez. Tentar otimizar tudo ao mesmo tempo gera dispersão de recursos. Se seu funil tem baixa conversão na página de vendas, investir mais em tráfego pago só aumentará o prejuízo.", ex: "Analise seus números atuais e determine: seu problema é tráfego, conversão ou margem?", checklist: ["Calcular taxa de conversão geral", "Avaliar volume de leads x vendas", "Isolar o componente com pior performance"] },
+                    { id: "m1_l4", title: "4. Distinguindo sintomas de causas reais", obj: "Evitar soluções superficiais para problemas operacionais.", content: "Sintoma: 'Minhas vendas caíram este mês'. Causa Real: 'O custo por clique subiu 40% porque o criativo ficou saturado e a oferta perdeu apelo para o público atual'. Tratar sintomas é colocar band-aid em fratura exposta. Sempre faça a pergunta dos '5 Porquês' antes de tomar uma decisão.", ex: "Pegue o maior problema recente da sua empresa e aplique os 5 Porquês.", checklist: ["Registrar o problema aparente", "Perguntar 'Por quê?' 5 vezes consecutivas", "Identificar a causa raiz operacional"] },
+                    { id: "m1_l5", title: "5. Escolha de prioridades (Matriz Impacto x Esforço)", obj: "Priorizar ações de alto retorno e baixa complexidade.", content: "Na operação HARD, a priorização é racional. Classificamos tarefas em: 1. Alto Impacto / Baixo Esforço (Fazer agora); 2. Alto Impacto / Alto Esforço (Projetar); 3. Baixo Impacto / Baixo Esforço (Delegar/Automatizar); 4. Baixo Impacto / Alto Esforço (Eliminar).", ex: "Classifique suas 5 principais tarefas pendentes na matriz.", checklist: ["Listar 5 tarefas pendentes", "Atribuir notas de 1 a 5 para impacto e esforço", "Eliminar tarefas de baixo impacto e alto esforço"] },
+                    { id: "m1_l6", title: "6. Construindo o Mapa Operacional da Empresa", obj: "Consolidar as etapas, ferramentas e responsáveis em um documento visual.", content: "O mapa operacional é o blueprint do seu negócio. Ele responde: O que entra? Quem processa? Qual ferramenta executa? Qual o tempo padrão? O que sai? Sem isso, a empresa depende 100% da memória do fundador, impossibilitando a escala.", ex: "Preencha a ferramenta 'Mapa da Operação' disponível na plataforma.", checklist: ["Preencher as etapas da operação na ferramenta", "Definir responsáveis e softwares", "Registrar oportunidades de melhoria"] }
+                ]
+            },
+            {
+                id: 2,
+                title: "Aquisição e Distribuição Multicanal",
+                icon: "🌐",
+                desc: "Diversifique os canais de entrada de clientes e meça a qualidade do tráfego.",
+                tool: "channel_matrix",
+                lessons: [
+                    { id: "m2_l1", title: "1. Avaliação comparativa de canais", obj: "Analisar orgânico, anúncios, parcerias e vendas diretas.", content: "Cada canal possui custos, tempo de maturação e níveis de intenção diferentes. Tráfego de busca (Google/SEO) possui alta intenção; redes sociais (Meta/TikTok) possuem alta interrupção e descoberta; vendas diretas (Outbound/Prospecção) possuem ciclo curto mas alto custo humano. O equilíbrio é a chave.", ex: "Atribua o nível de intenção do seu comprador em cada canal atual.", checklist: ["Listar todos os canais ativos", "Avaliar nível de intenção do usuário", "Calcular custo relativo de aquisição"] },
+                    { id: "m2_l2", title: "2. Compatibilidade entre Canal, Oferta e Recursos", obj: "Evitar investir em canais desalinhados com a margem do produto.", content: "Produtos de alto valor (High-Ticket) exigem canais de alta confiança (reuniões, consultoria, eventos, indicações). Produtos de baixo valor (Low-Ticket) exigem escala e automação direta. Vender produtos baratos via prospecção manual consome a margem do negócio.", ex: "Verifique se a margem de lucro do seu produto paga o custo operacional do canal.", checklist: ["Mapear margem por produto", "Verificar custo por atendimento no canal", "Validar viabilidade econômica do canal"] },
+                    { id: "m2_l3", title: "3. Adaptação de mensagem ao contexto do canal", obj: "Criar comunicação nativa para cada ambiente digital.", content: "A mesma mensagem falha se aplicada da mesma forma no LinkedIn e no Instagram. No LinkedIn, o foco é eficiência, ROI e carreira. No Instagram, o foco é estilo de vida, narrativa pessoal e facilidade. Adapte a linguagem mantendo a essência da oferta.", ex: "Reescreva a promessa principal da sua oferta para 2 canais diferentes.", checklist: ["Analisar tom de voz do canal", "Reescrever título do anúncio/post", "Testar formatos nativos"] },
+                    { id: "m2_l4", title: "4. Mitigação da dependência de canal único", obj: "Proteger a operação contra bloqueios e oscilações de algoritmos.", content: "Se 100% dos seus clientes vêm de uma única conta de anúncios ou perfil de rede social, você não tem uma empresa; você tem um risco. A regra HARD exige ao menos 2 fontes previsíveis de tráfego ativas simultaneamente.", ex: "Desenhe um plano B caso sua principal fonte de aquisição fique fora do ar por 15 dias.", checklist: ["Identificar concentração de risco", "Estruturar canal secundário de teste", "Construir base própria de leads (CRM/Email)"] },
+                    { id: "m2_l5", title: "5. Métricas de qualidade vs. Volume de tráfego", obj: "Focar em retenção e qualificação em vez de cliques vazios.", content: "1.000 visitantes qualificados valem mais que 100.000 curiosos. Avalie o tráfego por métricas de profundidade: tempo de permanência, taxa de rolagem, conversão em lead e qualificação (ICP - Perfil de Cliente Ideal).", ex: "Verifique no seu Analytics a taxa de rejeição da sua página de entrada.", checklist: ["Analisar tempo médio na página", "Calcular taxa de conversão de visitante para lead", "Filtrar qualidade dos leads gerados"] },
+                    { id: "m2_l6", title: "6. Documentação de resultados de canais", obj: "Criar um histórico estruturado de aquisição.", content: "O que não é registrado não pode ser otimizado. Toda semana, registre: Investimento no canal, Alcance/Impressões, Leads Gerados, Clientes Fechados, CAC por canal. Use a Matriz de Canais da plataforma.", ex: "Preencha a Matriz de Canais com dados reais dos últimos 30 dias.", checklist: ["Registrar investimento por canal", "Calcular CAC por canal", "Identificar canal com melhor ROAS/CAC"] },
+                    { id: "m2_l7", title: "7. Plano de distribuição semanal", obj: "Estabelecer uma rotina consistente de publicação e anúncios.", content: "A distribuição exige ritmo. Defina os dias e horários de postagens orgânicas, renovação de criativos de anúncios pagos e disparos de e-mail/mensagens. A previsibilidade operacional gera previsibilidade financeira.", ex: "Monte o calendário dos próximos 7 dias de distribuição.", checklist: ["Definir frequência de anúncios e posts", "Programar disparos de mensagens", "Revisar ativos de mídia"] },
+                    { id: "m2_l8", title: "8. Diversificação sem dispersão de recursos", obj: "Expandir para novos canais somente após validar o principal.", content: "Não abra um novo canal até que o canal atual esteja documentado, com processo rodando e gerando lucro sustentável. A dispersão é a principal causa de operações estagnadas.", ex: "Avalie se seu canal atual já atingiu maturidade antes de iniciar outro.", checklist: ["Verificar estabilidade do canal principal", "Definir orçamento máximo para teste do novo canal", "Estabelecer prazo limite de validação"] }
+                ]
+            },
+            {
+                id: 3,
+                title: "Engenharia de Ofertas e Portfólio de Produtos",
+                icon: "💎",
+                desc: "Desenvolva ofertas irrecusáveis baseadas em valor percebido, diferenciação e margem.",
+                tool: "offer_builder",
+                lessons: [
+                    { id: "m3_l1", title: "1. Avaliação de resolução de problemas reais", obj: "Validar se a oferta atende uma dor latente e pagável.", content: "Pessoas não compram produtos; compram transformações, alívio de dores ou atalhos para objetivos. Se sua oferta tenta resolver um problema superficial ou opcional, você terá alta objeção e custo de aquisição elevado.", ex: "Escreva em uma frase exata qual dor visceral seu produto resolve.", checklist: ["Identificar a dor principal do cliente", "Verificar se o cliente já gasta dinheiro com isso", "Validar o grau de urgência"] },
+                    { id: "m3_l2", title: "2. Diferenciação além da guerra de preços", obj: "Construir valor único através do método e entrega.", content: "Reduzir preço é a estratégia dos incompetentes. A verdadeira diferenciação vem do Método Proprietário, velocidade de entrega, nível de suporte, mecanismos de garantia e bônus cirúrgicos que eliminam objeções específicas.", ex: "Liste 3 elementos do seu produto que nenhum concorrente entrega igual.", checklist: ["Mapear concorrentes diretos", "Definir o mecanismo único da sua solução", "Ajustar o posicionamento de valor"] },
+                    { id: "m3_l3", title: "3. Arquitetura de Portfólio (Ladders de Valor)", obj: "Estruturar o funil de produtos para aumentar o LTV.", content: "Um negócio saudável possui produtos em diferentes níveis de preço e entrega: 1. Front-end (Entrada/Baixo risco); 2. Core Offer (Produto principal); 3. Back-end/High-Ticket (Acompanhamento/Implementação); 4. Recorrência (Continuína/SaaS/Comunidade).", ex: "Desenhe a escada de valor do seu produto, do gratuito ao mais alto valor.", checklist: ["Definir produto de entrada", "Definir oferta principal", "Estruturar produto de alta retenção/LTV"] },
+                    { id: "m3_l4", title: "4. Efeito do preço na margem e conversão", obj: "Encontrar o Ponto Ótimo de Preço (Price Elasticity).", content: "Preço baixo nem sempre vende mais. Em serviços e mentorias, um preço muito baixo gera desconfiança sobre a qualidade. Além disso, preços maiores cobrem o CAC crescente do tráfego pago e garantem margem de sobrevivência.", ex: "Simule o impacto de um aumento de 20% no seu preço atual.", checklist: ["Calcular margem atual por venda", "Testar percepção de preço com leads", "Revisar precificação com base nos custos operacionais"] },
+                    { id: "m3_l5", title: "5. Estruturação de Upsells, Cross-sells e Order Bumps", obj: "Aumentar o Ticket Médio (AOV) no checkout.", content: "O momento de maior propensão de compra do cliente é imediatamente após a aprovação do pagamento. Ofereça complementos diretos (Order Bumps) na página de checkout e ofertas complementares imediatas (Upsells em 1-clique).", ex: "Defina um produto complementar que pode ser vendido junto da oferta principal.", checklist: ["Criar um Order Bump simples", "Configurar oferta de Upsell imediato", "Calcular impacto estimado no AOV"] },
+                    { id: "m3_l6", title: "6. Análise de Garantias, Condições e Expectativas", obj: "Reduzir o risco percebido sem expor a operação a fraudes.", content: "A garantia deve transferir o risco das costas do comprador para as costas do vendedor. Teste garantias incondicionais (7 a 30 dias) e garantias condicionais baseadas em execução do aluno/cliente.", ex: "Escreva os termos exatos da sua garantia contratual.", checklist: ["Definir prazo de garantia incondicional", "Estruturar critérios de garantia condicional", "Alinhar termos claros de reembolso"] },
+                    { id: "m3_l7", title: "7. Teste de variações de oferta sem alterar o core", obj: "Validar copy e bônus mantendo a entrega principal.", content: "Você não precisa recriar o produto para testar novas ofertas. Mude o ângulo do anúncio, a promessa da chamada principal (headline) ou a combinação de bônus oferecidos.", ex: "Crie 2 ângulos de promessa diferentes para o mesmo produto.", checklist: ["Definir headline do Ângulo A", "Definir headline do Ângulo B", "Rodar teste de página ou tráfego dividido"] },
+                    { id: "m3_l8", title: "8. Quando reformular ou descontinuar uma oferta", obj: "Reconhecer ciclos de vida de produtos e estagnação.", content: "Se a taxa de conversão despenca, o CAC supera o LTV e as mudanças de copy não surtem efeito, a oferta pode ter atingido a saturação de público ou a dor tratada deixou de ser relevante.", ex: "Preencha o Construtor de Ofertas com os dados da sua oferta atual.", checklist: ["Analisar histórico de conversão da oferta", "Identificar nível de insatisfação/refund", "Decidir por Pivotar, Otimizar ou Descontinuar"] }
+                ]
+            },
+            {
+                id: 4,
+                title: "Funis Avançados e Otimização de Conversão",
+                icon: "⚡",
+                desc: "Mapeie, meça e elimine atritos em todas as etapas da sua jornada de vendas.",
+                tool: "funnel_calc",
+                lessons: [
+                    { id: "m4_l1", title: "1. Mapeamento de taxas de passagem entre etapas", obj: "Calcular a conversão exata em cada micro-etapa do funil.", content: "Um funil padrão possui as taxas: Visitantes -> Leads (20-40%), Leads -> Checkout (5-15%), Checkout -> Vendas (10-30%). Perdas drásticas em qualquer ponto indicam fricção técnica ou desalinhamento de mensagem.", ex: "Analisar as taxas da sua última campanha na calculadora de funil.", checklist: ["Coletar número de visitantes", "Coletar número de cadastros/leads", "Coletar checkouts iniciados e vendas"] },
+                    { id: "m4_l2", title: "2. Avaliação de fricção na experiência do usuário", obj: "Eliminar barreiras técnicas e de design que travam a compra.", content: "Páginas lentas (mais de 3s de carregamento), formulários com campos desnecessários, falta de HTTPS e botões mal posicionados destroem a conversão de tráfego pago.", ex: "Teste sua página de vendas no celular em conexão 4G e meça o tempo.", checklist: ["Verificar velocidade de carregamento", "Testar responsividade mobile", "Simplificar campos do formulário"] },
+                    { id: "m4_l3", title: "3. Identificação de pontos de abandono (Drop-off)", obj: "Descobrir onde você perde a maior parte do dinheiro.", content: "Se 80% das pessoas saem nos primeiros 10 segundos da sua página ou vídeo de vendas (VSL), o problema está no Hook (gancho inicial). Se chegam ao checkout e não compram, o problema é preço, frete, checkout confuso ou falta de provas de pagamento seguro.", ex: "Identifique exatamente qual etapa possui a maior taxa de desistência.", checklist: ["Analisar retenção do vídeo/página", "Mapear abandono de carrinho", "Implementar recuperação ativa"] },
+                    { id: "m4_l4", title: "4. Análise de clareza de copy e elementos de dúvida", obj: "Garantir que a mensagem seja compreendida em segundos.", content: "Se o visitante precisa pensar para entender o que você vende, ele fecha a aba. A headline deve declarar em 3 segundos: O que é, para quem é e qual o resultado claro.", ex: "Peça para uma pessoa leiga ler sua página e explicar o que você vende.", checklist: ["Revisar clareza da Headline", "Destacar provas sociais reais", "Tornar o botão de ação (CTA) visível sem rolar"] },
+                    { id: "m4_l5", title: "5. Formulação de hipóteses de melhoria de conversão (CRO)", obj: "Criar testes baseados em dados e não em palpites.", content: "Hipótese de Teste: 'Se alterarmos o botão do checkout de VAZIO para VERDE com o texto RECEBER ACESSO IMEDIATO, a taxa de finalização aumentará 5% porque reduz o medo de falta de entrega'.", ex: "Escreva 1 hipótese de teste clara para a sua página atual.", checklist: ["Identificar o elemento fraco", "Formular a mudança proposta", "Definir a métrica de validação"] },
+                    { id: "m4_l6", title: "6. Estruturação correta de Testes A/B", obj: "Executar testes isolando uma única variável por vez.", content: "Nunca mude a headline, a imagem e a oferta ao mesmo tempo em um teste A/B. Se a conversão mudar, você não saberá qual alteração causou o efeito. Altere uma variável por teste.", ex: "Prepare duas versões de headline para um teste em tráfego igual.", checklist: ["Isolar 1 única variável", "Dividir o tráfego em 50/50", "Manter o teste rodando até volume mínimo"] },
+                    { id: "m4_l7", title: "7. Interpretação de dados sem ilusão estatística", obj: "Evitar tirar conclusões precipitadas com poucas amostras.", content: "Concluir que uma página é melhor que outra com apenas 10 cliques e 1 venda é erro primário. Você precisa de volume mínimo de dados (pelo menos 100-500 conversões dependendo do ticket) para validar relevância.", ex: "Verifique se seus dados de teste possuem volume representativo.", checklist: ["Verificar tamanho da amostra", "Ignorar variações dos primeiros dias", "Documentar o aprendizado definitivo"] },
+                    { id: "m4_l8", title: "8. Documentação e decisões pós-teste", obj: "Registrar o histórico de otimizações da empresa.", content: "Mantenha um log de testes: Data, Variável Testada, Versão A (Controle), Versão B (Variante), Resultado (% conversão) e Decisão Implementada.", ex: "Cadastre o resultado do seu último teste no módulo de experimentos.", checklist: ["Registrar versão vencedora", "Atualizar a página oficial", "Arquivar dados do teste"] },
+                    { id: "m4_l9", title: "9. Considerações de público e sazonalidade", obj: "Diferenciar variações de mercado de problemas de funil.", content: "Campanhas performam diferente em fins de semana, datas comemorativas ou períodos de pagamento do consumidor. Leve em conta o contexto macroeconômico ao analisar quedas temporárias.", ex: "Compare seus dados atuais com os mesmos dias das semanas anteriores.", checklist: ["Mapear sazonalidade do setor", "Ajustar orçamento em períodos de baixa", "Analisar retenção por coorte de público"] }
+                ]
+            },
+            {
+                id: 5,
+                title: "Inteligência de Dados e Tomada de Decisão",
+                icon: "📊",
+                desc: "Transforme métricas isoladas em um painel estratégico focado em lucro e margem.",
+                tool: "metrics_panel",
+                lessons: [
+                    { id: "m5_l1", title: "1. Transformando números em perguntas de negócio", obj: "Aprender a interrogar os dados da sua empresa.", content: "Dados soltos são ruído. Perguntas certas geram clareza. Em vez de olhar para '10.000 impressões', pergunte: 'Dessas 10.000 pessoas, quantas clicaram e qual o custo por lead qualificado em comparação à semana passada?'", ex: "Formule 3 perguntas estratégicas que seus dados atuais precisam responder.", checklist: ["Definir a pergunta prioritária", "Localizar a métrica correspondente", "Estabelecer a meta desejada"] },
+                    { id: "m5_l2", title: "2. Métricas de Vaidade vs. Métricas Operacionais Reais", obj: "Filtrar indicadores que não pagam as contas da empresa.", content: "Métricas de Vaidade: Curtidas, seguidores, alcance bruto, visualizações de reels. Métricas Operacionais Reais: CAC (Custo de Aquisição de Cliente), LTV (Lifetime Value), ROAS (Retorno sobre Anúncios), Margem de Contribuição, Churn e Net Profit.", ex: "Elimine métricas superficiais dos seus relatórios de decisão semanal.", checklist: ["Identificar métricas de vaidade em uso", "Substituir por métricas de resultado financeiro", "Focar no Lucro Líquido Real"] },
+                    { id: "m5_l3", title: "3. Definição de KPIs por Modelo de Negócio", obj: "Escolher os indicadores chave para seu tipo de operação.", content: "Infoprodutos/Dropshipping: Custo por Aquisição (CPA) e ROAS imediato. SaaS/Recorrência: MRR (Receita Mensal Recorrente), Churn Rate e CAC Payback. Serviços/Agências: Margem de Projeto, Horas/Homem e NPS.", ex: "Selecione os 4 KPIs vitais para o seu modelo atual.", checklist: ["Mapear modelo de negócio", "Definir os 4 KPIs primários", "Estabelecer metas atingíveis"] },
+                    { id: "m5_l4", title: "4. Segmentação avançada de dados", obj: "Analisar dados divididos por oferta, canal e coorte.", content: "Analisar a 'média geral' da empresa esconde gargalos. Sua margem pode parecer boa no geral, mas ao segmentar, você descobre que o Canal A dá 300% de lucro e o Canal B dá prejuízo severo cobrindo a perda.", ex: "Segmente suas vendas do mês por canal de origem do cliente.", checklist: ["Isolar dados por canal de aquisição", "Comparar ticket médio por segmento", "Cortar segmentos deficitários"] },
+                    { id: "m5_l5", title: "5. Análise de tendências vs. Reações de curto prazo", obj: "Tomar decisões com base em médias móveis e não picos.", content: "Não mude toda a estratégia por causa de um dia ruim de vendas. Acompanhe a média móvel de 7 e 30 dias para identificar se o negócio está em tendência de alta, estabilidade ou queda real.", ex: "Plote sua receita diária dos últimos 14 dias para ver a tendência.", checklist: ["Calcular média móvel semanal", "Identificar padrões de oscilação", "Tomar ações apenas com tendência confirmada"] },
+                    { id: "m5_l6", title: "6. Gestão por Hipóteses e Níveis de Confiança", obj: "Reduzir o achismo na diretoria da empresa.", content: "Decisões na HARD seguem o padrão: Evidência -> Hipótese -> Teste -> Conclusão. Nunca altere processos críticos sem ao menos 80% de confiança nos dados coletados.", ex: "Apresente uma justificativa baseada em dados para sua próxima decisão.", checklist: ["Listar evidências concretas", "Definir hipótese de ação", "Estabelecer prazo de reavaliação"] },
+                    { id: "m5_l7", title: "7. Criação e rotina de Relatórios Executivos", obj: "Implementar rituais de acompanhamento diário, semanal e mensal.", content: "Rituais recomendados: Daily (5 min de checagem de métricas críticas), Weekly Review (Análise de funil, tráfego e vendas da semana), Monthly DRE (Fechamento financeiro e margem líquida).", ex: "Agende no seu calendário o horário fixo da sua reunião semanal de métricas.", checklist: ["Criar modelo de relatório semanal", "Agendar reunião/ritual de análise", "Documentar plano de ação quinzenal"] },
+                    { id: "m5_l8", title: "8. Registro centralizado de decisões (Decision Log)", obj: "Evitar repetir erros antigos e esquecer aprendizados.", content: "Mantenha uma tabela simples: Data, Decisão Tomada, Motivo/Dado Utilizado, Resultado Observado após 30 dias. Isso constrói o ativo de inteligência da sua empresa.", ex: "Cadastre no seu painel a última decisão estratégica tomada.", checklist: ["Criar histórico de decisões", "Revisar resultados a cada 30 dias", "Ajustar premissas operacionais"] },
+                    { id: "m5_l9", title: "9. Construção do Painel de Métricas HARD", obj: "Configurar seu dashboard de controle diário.", content: "Utilize o Painel de Métricas desta plataforma para inserir seus números reais de tráfego, conversão, custos e receita, acompanhando a evolução das margens de forma clara.", ex: "Preencha todos os campos do Painel de Métricas com o histórico do mês atual.", checklist: ["Inserir custos e receita reais", "Acompanhar cálculo automático de margem", "Exportar relatório de métricas"] }
+                ]
+            },
+            {
+                id: 6,
+                title: "Tráfego Pago, Gestão de Anúncios e Orçamento",
+                icon: "🎯",
+                desc: "Gerencie campanhas com foco em Custo de Aquisição (CPA), ROAS e Margem Operacional.",
+                tool: "traffic_calc",
+                lessons: [
+                    { id: "m6_l1", title: "1. Planejamento de campanhas baseado em metas comerciais", obj: "Calcular quantas conversões e tráfego são necessários para atingir a meta.", content: "Não comece a criar anúncios na Meta Ads ou Google Ads sem saber sua meta exata. Se a meta é R$ 50.000 em receita com ticket de R$ 500, você precisa de 100 vendas. Se sua conversão é 2%, precisa de 5.000 cliques qualificados.", ex: "Utilize a Calculadora de Tráfego para projetar os números da sua próxima campanha.", checklist: ["Definir meta de faturamento", "Calcular quantidade de vendas necessárias", "Estimar cliques e budget de tráfego"] },
+                    { id: "m6_l2", title: "2. Alinhamento de Público, Criativo, Oferta e Destino", obj: "Garantir consistência da mensagem da promessa ao checkout.", content: "A razão nº 1 para anúncios caros é o desalinhamento. Se o criativo promete 'Método de Escala', a página de destino fala sobre 'Cursos de Marketing' e a oferta é uma 'Mentoria de Vendas', o cliente se confunde e abandona.", ex: "Verifique se a mesma palavra-chave principal está no anúncio, na página e no checkout.", checklist: ["Conferir promessa do anúncio x página", "Manter identidade visual coerente", "Garantir chamada para ação idêntica"] },
+                    { id: "m6_l3", title: "3. Metodologia de teste contínuo de criativos", obj: "Estruturar testes de imagens, vídeos e copies sem desperdício.", content: "Criativos são o principal alavancador de tráfego pago hoje. Teste semanalmente: 3 Variações de Imagem/Vídeo x 2 Copies x 1 Público Aberto. Identifique os campeões pelo menor CPA de lead/venda.", ex: "Crie 3 abordagens de vídeos curtos diferentes para a mesma oferta.", checklist: ["Desenvolver 3 abordagens de criativo", "Subir campanha de teste isolada", "Desligar criativos abaixo da média após 48-72h"] },
+                    { id: "m6_l4", title: "4. Métricas de leilão: CPM, CTR, CPC, CPA e ROAS", obj: "Interpretar os custos de anúncios e agir de forma corretiva.", content: "CPM alto = público disputado ou criativo ruim. CTR baixo (menor que 1,5%) = anúncio sem retenção/interesse. CPC alto = consequência de CPM alto ou CTR baixo. CPA alto = problema na página de vendas ou preço.", ex: "Analise as métricas dos seus anúncios ativos hoje.", checklist: ["Avaliar CTR das campanhas (Meta > 1.5%)", "Verificar Custo por Clique (CPC)", "Monitorar Custo por Aquisição (CPA) real"] },
+                    { id: "m6_l5", title: "5. Cálculo do CPA Máximo Aceitável (Break-even CPA)", obj: "Saber o valor limite que você pode pagar por um cliente sem ter prejuízo.", content: "CPA Máximo = Preço de Venda - Custos Improdutivos/Impostos/Taxas de Checkout. Se seu produto custa R$ 200 e suas taxas/impostos somam R$ 40, seu CPA Máximo é R$ 160. Pagar acima disso é operar no prejuízo.", ex: "Calcule o CPA Máximo do seu produto principal.", checklist: ["Somar impostos e taxas do produto", "Subtrair do valor total de venda", "Anotar o CPA Limite na gestão de tráfego"] },
+                    { id: "m6_l6", title: "6. Limites de orçamento e critérios de interrupção (Stop Loss)", obj: "Proteger seu caixa contra gastos descontrolados em anúncios.", content: "Defina a regra de corte de campanhas: Se um conjunto de anúncios gastou 1,5x a 2x o valor do CPA Máximo sem gerar nenhuma conversão, DESLIGUE imediatamente. Não 'espere para ver se melhora'.", ex: "Estabeleça a regra clara de stop loss para suas campanhas ativas.", checklist: ["Definir teto de orçamento por teste", "Configurar regras automáticas de interrupção", "Monitorar diariamente o gasto acumulado"] },
+                    { id: "m6_l7", title: "7. Interpretação de amostras pequenas e dias sem vendas", obj: "Evitar desespero e alterações precipitadas nas campanhas.", content: "O algoritmo das plataformas passa por fases de aprendizado. Variações de 24h a 48h são normais. Avalie o desempenho acumulado de janelas de 3 a 7 dias antes de reestruturar conjuntos de anúncios.", ex: "Compare o desempenho acumulado de 7 dias com o desempenho de hoje.", checklist: ["Analisar janela de 7 dias", "Verificar fase de aprendizado da plataforma", "Evitar edições constantes na mesma campanha"] },
+                    { id: "m6_l8", title: "8. Documentação de testes de tráfego", obj: "Criar histórico de criativos e públicos com alta performance.", content: "Salve os criativos que performaram bem em uma pasta de ativos organizados. Documente qual gancho, headline e público geraram o menor CPA histórico.", ex: "Organize sua biblioteca de anúncios vencedores.", checklist: ["Salvar links/arquivos dos criativos campeões", "Anotar métricas alcançadas", "Reutilizar ângulos validados em novas campanhas"] },
+                    { id: "m6_l9", title: "9. Diagnóstico: Tráfego, Oferta ou Experiência?", obj: "Descobrir de quem é a culpa pela falta de vendas.", content: "CTR alto + CPC baixo + Zero Vendas = Problema na Oferta ou Página de Vendas. CTR baixo + CPC altíssimo = Anúncio Ruim ou Público Incorreto. Carrinho Abandonado Alto = Frete, Checkout Ruim ou Falta de Opções de Pagamento.", ex: "Aplique este diagnóstico na sua campanha atual.", checklist: ["Verificar CTR (se bom, anúncio funciona)", "Verificar Taxa da Página (se baixa, oferta/página ruim)", "Ajustar o ponto fraco isolado"] },
+                    { id: "m6_l10", title: "10. Processo estruturado de escala de tráfego", obj: "Aumentar orçamento com segurança sem explodir o CPA.", content: "Escala Horizontal: Duplicar conjuntos validados para novos públicos/interesses. Escala Vertical: Aumentar o orçamento da campanha validada em 15% a 20% a cada 2 a 3 dias, monitorando o CPA mantido.", ex: "Simule uma escala de 20% no seu conjunto de anúncios campeão.", checklist: ["Verificar estabilidade do CPA", "Aplicar aumento de 15-20% no orçamento", "Acompanhar retorno por 48 horas"] }
+                ]
+            },
+            {
+                id: 7,
+                title: "Operação Comercial, CRM e Vendas Diretas",
+                icon: "💼",
+                desc: "Construa um processo comercial previsível de prospecção, qualificação e fechamento.",
+                tool: "crm",
+                lessons: [
+                    { id: "m7_l1", title: "1. Estruturação de um pipeline de vendas repetível", obj: "Mapear as etapas por onde todo cliente em potencial deve passar.", content: "Etapas padrão de um CRM Comercial HARD: 1. Novo Lead (Contato inicial); 2. Qualificação (Perfil alinhado?); 3. Agendamento/Apresentação (Oferta enviada); 4. Negociação/Objeções; 5. Fechado/Ganho; 6. Perdido (Com motivo registrado).", ex: "Acesse o CRM desta plataforma e visualize as etapas configuradas.", checklist: ["Entender a função de cada etapa comercial", "Definir os critérios de passagem entre etapas", "Evitar leads acumulados sem definição"] },
+                    { id: "m7_l2", title: "2. Critérios rigorosos de qualificação (BANT / SPIN)", obj: "Parar de perder tempo atendendo leads sem orçamento ou decisão.", content: "Filtre leads pelo framework BANT: Budget (Possui orçamento?), Authority (É o tomador de decisão?), Need (Tem a dor real?), Timeline (Quer resolver agora?). Leads sem qualificação não avançam para proposta.", ex: "Crie 3 perguntas filtro para seu processo de atendimento comercial.", checklist: ["Definir Perfil de Cliente Ideal (ICP)", "Criar script simples de qualificação", "Desqualificar rapidamente leads sem perfil"] },
+                    { id: "m7_l3", title: "3. Registro sistemático de conversas e próximos passos", obj: "Nunca deixar um lead sem data e horário de follow-up definido.", content: "Regra Comercial HARD: 'Nenhum lead fica sem a PRÓXIMA AÇÃO agendada'. Se enviou proposta hoje, a próxima ação deve ser: 'Follow-up de decisão agendado para dia X às Yh'. Terminar um contato sem próximo passo é perder a venda.", ex: "Cadastre 3 leads no CRM com próxima ação e data preenchidas.", checklist: ["Registrar resumo de toda conversa", "Definir data da próxima ação para todos os leads", "Agendar alertas/lembretes de follow-up"] },
+                    { id: "m7_l4", title: "4. Processo de Follow-up profissional sem parecer chato", obj: "Manter o lead engajado adicionando valor a cada contato.", content: "Não faça o 'E aí, deu certo?' genérico. Faça o follow-up de valor: 'Olá [Nome], vi este estudo sobre [problema do lead] e lembrei da nossa conversa. Conseguiram analisar a proposta para avançarmos no projeto?'", ex: "Escreva 2 modelos de mensagem de follow-up focado em valor.", checklist: ["Desenvolver templates de follow-up de valor", "Definir cadência (Ex: Dia 1, Dia 3, Dia 7)", "Encerrar contatos inativos educadamente"] },
+                    { id: "m7_l5", title: "5. Análise de motivos de perda de negócios (Lost Reason)", obj: "Aprender exatamente por que a empresa perde dinheiro nas vendas.", content: "Sempre que marcar um lead como 'Perdido' no CRM, exija o motivo real: Preço, Concorrente, Sem Orçamento, Projeto Adiado, Falta de Recurso do Produto. Analise os motivos mensais para corrigir a oferta.", ex: "Verifique o motivo mais comum de perda de vendas no seu histórico.", checklist: ["Padronizar os motivos de perda no CRM", "Analisar relatório mensal de perdas", "Corrigir os gargalos do produto/processo"] },
+                    { id: "m7_l6", title: "6. Tempo de ciclo de vendas (Sales Cycle Length)", obj: "Reduzir o tempo entre o primeiro contato e o pagamento.", content: "Quanto mais longo o ciclo de vendas, maior o custo comercial e menor a taxa de fechamento. Reduza o tempo enviando propostas em tempo real durante reuniões e definindo prazos curtos de validade da proposta.", ex: "Calcule quantos dias em média um lead leva para fechar na sua empresa.", checklist: ["Mapear tempo médio por etapa comercial", "Reduzir prazos de envio de propostas", "Incentivar decisão no momento da apresentação"] },
+                    { id: "m7_l7", title: "7. Padronização de scripts e treinamentos comerciais", obj: "Desvincular o sucesso comercial do 'talento individual'.", content: "Construa o Playbook de Vendas da empresa com respostas prontas para as 10 principais objeções dos clientes. Qualquer novo vendedor deve conseguir usar a estrutura imediatamente.", ex: "Escreva a resposta padrão para a objeção 'Achei o valor muito alto'.", checklist: ["Mapear as 10 principais objeções", "Criar script com contornos de objeção", "Documentar o Playbook Comercial"] },
+                    { id: "m7_l8", title: "8. Pós-venda imediato e onboarding comercial", obj: "Garantir a transição perfeita do comprador para o suporte/entrega.", content: "A venda não termina no pagamento; ela começa. O momento pós-compra exige confirmação imediata, envio do acesso e instruções dos primeiros passos para evitar o arrependimento do comprador.", ex: "Desenhe a mensagem enviada aos primeiros 5 minutos após o fechamento.", checklist: ["Criar mensagem de boas-vindas automatizada", "Confirmar dados de acesso/entrega", "Apresentar o responsável pelo onboarding"] },
+                    { id: "m7_l9", title: "9. Gestão prática do CRM Local HARD", obj: "Dominar a ferramenta comercial interna.", content: "Utilize o CRM da plataforma para adicionar, editar, filtrar, buscar e monitorar seus negócios em andamento, mantendo seu pipeline comercial sempre limpo e atualizado.", ex: "Adicione, edite e mova de etapa um lead de teste na ferramenta CRM.", checklist: ["Manter saldo de pipeline atualizado", "Excluir ou arquivar leads duplicados", "Revisar diariamente oportunidades abertas"] }
+                ]
+            },
+            {
+                id: 8,
+                title: "Retenção, LTV, Experiência e NPS",
+                icon: "❤️",
+                desc: "Maximize o tempo de vida do cliente (LTV) e reduza a taxa de cancelamentos (Churn).",
+                tool: "feedback_panel",
+                lessons: [
+                    { id: "m8_l1", title: "1. A economia da retenção vs. Custo de Aquisição", obj: "Compreender por que reter clientes é até 7x mais barato que adquirir novos.", content: "Vender de novo para quem já confia na sua empresa possui CAC próximo de zero e taxas de conversão acima de 60%. Empresas escaláveis constroem lucros recorrentes baseados na retenção e recompra.", ex: "Calcule a porcentagem da sua receita vinda de clientes antigos este mês.", checklist: ["Mapear receita de novos clientes x clientes antigos", "Calcular taxa de recompra anual", "Focar na jornada de retenção"] },
+                    { id: "m8_l2", title: "2. Estruturação de Onboarding de Alta Velocidade", obj: "Fazer o cliente ter a 'primeira vitória' no produto o mais rápido possível.", content: "O 'Time-to-Value' (TTV) é o tempo que o cliente leva para ver o primeiro resultado prático do seu produto. Quanto menor o TTV, menor o churn e o refund. Elimine burocracias no primeiro acesso.", ex: "Identifique como dar ao seu cliente uma pequena vitória em menos de 24h.", checklist: ["Mapear tempo do pagamento até o primeiro uso", "Simplificar telas de primeiro acesso", "Acompanhar clientes que não acessaram nos primeiros 3 dias"] },
+                    { id: "m8_l3", title: "3. Alinhamento de expectativas vs. Entrega real", obj: "Evitar promessas de marketing que geram frustração na entrega.", content: "Prometer mais do que o produto entrega destrói a reputação e gera enxurrada de pedidos de reembolso. Prometa exatamente o que entrega, ou supere ligeiramente as expectativas no pós-venda (Underpromise, Overdeliver).", ex: "Revise as promessas da sua página de vendas contra a realidade da entrega.", checklist: ["Auditara entrega em relação à copy de vendas", "Eliminar promessas irrealistas do marketing", "Adicionar surpresas/bônus não anunciados"] },
+                    { id: "m8_l4", title: "4. Análise e prevenção de cancelamentos (Churn Analysis)", obj: "Mapear os gatilhos que levam o cliente a desistir da sua empresa.", content: "Os clientes não cancelam 'do nada'. Os sinais de churn aparecem semanas antes: queda nos acessos, ausência nas reuniões, tickets de suporte não respondidos ou uso caindo. Crie alertas de risco de churn.", ex: "Liste os 3 principais motivos relatados por quem pediu cancelamento recentemente.", checklist: ["Identificar indicadores de risco de churn", "Estruturar fluxo de recuperação antes do cancelamento", "Tratar causas com correções no produto"] },
+                    { id: "m8_l5", title: "5. Pesquisa contínua de Satisfação e NPS (Net Promoter Score)", obj: "Medir o índice de recomendação real dos seus clientes.", content: "Pergunte ao cliente: 'Em uma escala de 0 a 10, o quanto você recomendaria nossa empresa para um amigo?' 9-10: Promotores (Peça depoimentos e indicações). 7-8: Neutros. 0-6: Detratores (Ação imediata).", ex: "Aplique a pesquisa de NPS simples com seus clientes ativos hoje.", checklist: ["Coletar notas de NPS dos clientes", "Segregar Promotores, Neutros e Detratores", "Entrar em contato individual com Detratores"] },
+                    { id: "m8_l6", title: "6. Estruturação de programas de Indicação (Referral)", obj: "Transformar clientes satisfeitos em canal ativo de aquisição.", content: "Ofereça recompensas financeiras, créditos em produtos ou upgrades exclusivos para clientes que indicarem novos compradores qualificados. Indicação possui o menor CPA de todo o negócio.", ex: "Crie uma mecânica simples de indicação (Ex: Indique 1 amigo e ganhe R$ X).", checklist: ["Definir a recompensa por indicação", "Facilitar o link/processo de indicação", "Divulgar o programa para seus Promotores de NPS"] },
+                    { id: "m8_l7", title: "7. Centralização de atendimento e Base de Conhecimento", obj: "Reduzir custos operacionais de suporte com documentação.", content: "Não responda a mesma dúvida manualmente 100 vezes. Crie uma Central de Ajuda/FAQ estruturada e fácil de pesquisar. Reserve o atendimento humano para casos complexos e estratégicos.", ex: "Mapeie as 10 perguntas mais repetidas do seu suporte e crie artigos/vídeos curtos.", checklist: ["Listar dúvidas mais comuns do suporte", "Criar FAQ/Base de Conhecimento", "Treinar equipe para direcionar à base"] },
+                    { id: "m8_l8", title: "8. Métricas de retenção acumulada: LTV e Churn Rate", obj: "Calcular a longevidade financeira do seu cliente na empresa.", content: "LTV = Ticket Médio x Frequência de Recompra Anual x Anos de Retenção. Se o seu LTV for de R$ 3.000 e seu CAC for de R$ 500, seu negócio possui margem excelente para escala agressiva.", ex: "Calcule seu LTV estimado com base no histórico dos últimos 6 meses.", checklist: ["Calcular Ticket Médio", "Mapear tempo médio de permanência do cliente", "Comparar a razão LTV / CAC (Ideal > 3x)"] },
+                    { id: "m8_l9", title: "9. Painel de Feedbacks e Otimização Contínua", obj: "Gerenciar relatos de clientes no painel interno.", content: "Acesse a ferramenta 'Painel de Feedbacks' nesta plataforma para registrar problemas relatados, ações propostas, prioridade de ajuste e situação da resolução na sua empresa.", ex: "Cadastre 2 feedbacks reais recebidos esta semana na ferramenta de feedbacks.", checklist: ["Registrar críticas/feedbacks no painel", "Atribuir prioridade de correção", "Acompanhar encerramento dos chamados"] }
+                ]
+            },
+            {
+                id: 9,
+                title: "Finanças, Margem de Contribuição e Gestão de Risco",
+                icon: "💰",
+                desc: "Organize o fluxo de caixa, DRE simulado, cálculo de Ponto de Equilíbrio e gestão de riscos.",
+                tool: "finance_calc",
+                lessons: [
+                    { id: "m9_l1", title: "1. Organização essencial do Fluxo de Caixa", obj: "Separar caixas da pessoa física e jurídica e registrar toda movimentação.", content: "O erro número 1 do empreendedor digital é misturar contas pessoais com o caixa da empresa. Estabeleça um Pró-labore fixo para o fundador. Tudo que sobra no caixa é RESERVA DA EMPRESA e capital para reinvestimento.", ex: "Separe definitivamente as contas bancárias e defina seu pró-labore fixo hoje.", checklist: ["Separar conta PF da PJ", "Definir valor fixo do Pró-labore do fundador", "Registrar 100% de entradas e saídas"] },
+                    { id: "m9_l2", title: "2. Cálculo correto da Margem de Contribuição", obj: "Saber quanto cada produto realmente contribui para pagar a estrutura fixa.", content: "Margem de Contribuição = Receita Bruta - (Custos Variáveis + Impostos + Taxas de Gateway + Comissões + Tráfego Direto). Se ela for negativa ou muito baixa, quanto mais você vende, mais perto da falência você chega.", ex: "Calcule a margem de contribuição exata do seu produto principal.", checklist: ["Somar todas as taxas variáveis do produto", "Subtrair da Receita por unidade", "Verificar porcentagem da Margem de Contribuição"] },
+                    { id: "m9_l3", title: "3. Estruturação do DRE Simplicado (Demonstrativo de Resultado)", obj: "Acompanhar a saúde financeira mensal do negócio.", content: "Estrutura HARD do DRE: (+) Receita Bruta (-) Impostos (-) Custos Variáveis (=) Margem de Contribuição (-) Despesas Fixas Operacionais (=) EBITDA (-) Amortizações / Taxas (-) Lucro Líquido Real.", ex: "Preencha a ferramenta de Planejador Financeiro/DRE da plataforma com dados do mês.", checklist: ["Coletar receitas e custos do mês", "Preencher o formulário financeiro da plataforma", "Avaliar a porcentagem de Lucro Líquido"] },
+                    { id: "m9_l4", title: "4. Cálculo e Interpretação do Ponto de Equilíbrio (Break-even)", obj: "Saber o faturamento exato necessário para cobrir todos os custos do mês.", content: "Break-even em Reais = Custos Fixos Totais / (% Margem de Contribuição). Se seus custos fixos são R$ 10.000 e sua margem de contribuição é 50%, seu faturamento mínimo de sobrevivência é R$ 20.000.", ex: "Calcule o seu ponto de equilíbrio mensal exato na ferramenta financeira.", checklist: ["Mapear despesas fixas totais da empresa", "Aplicar a fórmula do Ponto de Equilíbrio", "Acompanhar os dias do mês para atingir o break-even"] },
+                    { id: "m9_l5", title: "5. Planejamento de Reservas de Emergência e Capital de Giro", obj: "Manter a operação protegida contra variações do mercado digital.", content: "Uma operação digital madura deve manter no caixa uma Reserva Operacional equivalente a 3 a 6 meses de Custos Fixos Totais da empresa. Isso garante tranquilidade durante quedas de tráfego ou mudanças de algoritmo.", ex: "Calcule quanto falta para sua empresa atingir 3 meses de reserva operacional.", checklist: ["Definir custo operacional mensal fixo", "Multiplicar por 3 a 6 meses", "Direcionar % do lucro mensal para a conta de reserva"] },
+                    { id: "m9_l6", title: "6. Política segura de Reinvestimento e Dividendos", obj: "Decidir quanto reinvestir na empresa sem sufocar a operação.", content: "Regra HARD de distribuição do Lucro Líquido: 50% Reinvestimento no caixa da empresa (Anúncios/Equipe/Sistemas), 30% Reserva de Emergência, 20% Distribuição de Dividendos para os sócios.", ex: "Estabeleça a porcentagem oficial de distribuição de lucros da empresa.", checklist: ["Definir política de reinvestimento", "Alocar percentual para reserva corporativa", "Ajustar pagamentos de dividendos com base no lucro real"] },
+                    { id: "m9_l7", title: "7. Avaliação e Gestão de Riscos Concentrados", obj: "Identificar ameaças financeiras de fornecedores, plataformas e processadores.", content: "Risco de Concentração de Gateway: Se todo seu dinheiro passa por apenas 1 processador de pagamento e ele bloqueia seu saldo por 30 dias, sua empresa quebra? Tenha sempre um gateway secundário integrado.", ex: "Mapeie os 3 maiores riscos de paralisação de caixa da sua empresa hoje.", checklist: ["Cadastrar gateway de pagamento reserva", "Mapear dependência de únicos fornecedores", "Estabelecer contingência de conta bancária"] },
+                    { id: "m9_l8", title: "8. Análise de Cenários: Otimista, Conservador e Adverso", obj: "Projetar os próximos 3 meses sob diferentes condições de mercado.", content: "Sempre monte seu orçamento financeiro baseado no Cenário Conservador (CPA 30% mais alto, conversão 20% menor). Se o negócio se sustenta no cenário adverso, você está pronto para crescer.", ex: "Simule 3 cenários de faturamento para o próximo trimestre no planejador.", checklist: ["Projetar cenário conservador (pior hipótese)", "Projetar cenário provável", "Ajustar custos para suportar o cenário conservador"] },
+                    { id: "m9_l9", title: "9. Prudência em Empréstimos, Dívidas e Financiamentos", obj: "Evitar alavancagem financeira em estratégias não validadas.", content: "Nunca pegue empréstimos bancários para 'testar anúncios' ou 'lançar novos produtos não validados'. Dívida em negócios digitais só deve ser avaliada para escalar uma operação que JÁ É LÚCRA e validada.", ex: "Verifique se a sua empresa possui dívidas sem validação operacional.", checklist: ["Eliminar dívidas de juros altos", "Proibir empréstimos para testes de tráfego", "Financiar expansão apenas com capital próprio ou caixa retido"] },
+                    { id: "m9_l10", title: "10. Relatório Financeiro e DRE Simulado na Plataforma", obj: "Executar os cálculos financeiros com precisão no sistema.", content: "Utilize o Simulador Financeiro e DRE da plataforma para testar receitas, despesas fixas, variáveis e taxas, calculando automaticamente seu resultado líquido e margem real.", ex: "Execute uma simulação completa na ferramenta de Finanças.", checklist: ["Preencher receita bruta esperada", "Inserir despesas operacionais detalhadas", "Salvar e analisar o resultado calculado pelo sistema"] }
+                ]
+            },
+            {
+                id: 10,
+                title: "Processos, Automação e Procedimentos Padrão (SOP)",
+                icon: "⚙️",
+                desc: "Documente operações, crie listas de verificação e construa sua biblioteca de SOPs.",
+                tool: "sop_builder",
+                lessons: [
+                    { id: "m10_l1", title: "1. Identificação e Mapeamento de Tarefas Repetitivas", obj: "Localizar rotinas que consomem tempo valioso e podem ser padronizadas.", content: "Anote durante 5 dias todas as tarefas executadas na empresa. Quaisquer tarefas executadas mais de 3 vezes por semana da mesma forma devem ser padronizadas em um Procedimento Operacional Padrão (SOP).", ex: "Liste 3 tarefas operacionais repetitivas executadas esta semana.", checklist: ["Mapear rotinas diárias e semanais", "Identificar tarefas de alto consumo de tempo", "Selecionar a primeira rotina para padronizar"] },
+                    { id: "m10_l2", title: "2. Documentação Passo a Passo de Processos (SOPs)", obj: "Escrever procedimentos que qualquer pessoa consiga seguir sem dúvidas.", content: "Estrutura de um SOP HARD: 1. Nome do Processo; 2. Objetivo Claro; 3. Responsável; 4. Ferramentas Necessárias; 5. Passo a Passo Detalhado (Texto/Screencast); 6. Critérios de Qualidade (Como saber se foi bem feito?).", ex: "Escreva o passo a passo para publicar um produto ou subir uma campanha na sua empresa.", checklist: ["Definir objetivo e responsável pelo SOP", "Listar os passos em ordem cronológica", "Adicionar capturas de tela ou links de instrução"] },
+                    { id: "m10_l3", title: "3. Criação de Checklists Operacionais Obrigatórios", obj: "Eliminar erros humanos por esquecimento em processos críticos.", content: "Cirurgiões e pilotos de avião usam checklists não por falta de conhecimento, mas para evitar falhas humanas. Crie checklists para subida de anúncios, envio de e-mails em massa e onboarding de novos clientes.", ex: "Crie um checklist de 5 itens para ser verificado antes de ativar qualquer campanha.", checklist: ["Listar falhas frequentes registradas no passado", "Transformar soluções em itens de checklist", "Tornar o checklist obrigatório antes de cada execução"] },
+                    { id: "m10_l4", title: "4. Avaliação e Critérios para Automação de Processos", obj: "Automatizar apenas processos que já funcionam perfeitamente no manual.", content: "Regra da Automação HARD: 'Automatizar um processo ruim só faz você cometer erros mais rápido e em maior escala'. Primeiro execute manualmente, documente, elimine falhas e somente depois automatize com softwares (Make, Zapier, Webhooks).", ex: "Verifique se a tarefa que você deseja automatizar já está 100% testada no manual.", checklist: ["Validar o processo no modo manual", "Garantir taxa de erro zero no manual", "Desenhar o fluxo de integração antes de configurar o software"] },
+                    { id: "m10_l5", title: "5. Mapeamento de Entradas, Processos, Decisões e Saídas", obj: "Desenhar diagramas de fluxo de trabalho sem ambiguidade.", content: "Entrada (Ex: Lead preenche formulário) -> Decisão (Lead tem faturamento > R$ 10k?) -> Se SIM: Enviar para CRM Executivo / Se NÃO: Enviar para Sequência Automática -> Saída (Agendamento de reunião).", ex: "Desenhe o fluxograma de decisão do seu atendimento no papel.", checklist: ["Identificar gatilho de entrada do processo", "Mapear pontos de decisão (Sim / Não)", "Definir o resultado final esperado"] },
+                    { id: "m10_l6", title: "6. Gestão de Exceções e Protocolos de Recuperação", obj: "Saber exatamente o que fazer quando um sistema ou automação falha.", content: "O que acontece se a API do gateway cair? O que fazer se o e-mail de acesso não for entregue? Seu SOP deve conter uma seção explicativa: 'O que fazer se der errado' (Troubleshooting).", ex: "Escreva a instrução de emergência para quando um cliente reclama que não recebeu o acesso.", checklist: ["Listar as 3 falhas técnicas mais comuns", "Definir o protocolo manual de contingência", "Treinar a equipe no atendimento de emergência"] },
+                    { id: "m10_l7", title: "7. Organização e Manutenção da Biblioteca de SOPs", obj: "Manter a documentação da empresa acessível e atualizada.", content: "SOPs guardados em pastas perdidas não servem para nada. Mantenha uma Biblioteca de Processos centralizada, categorizada por departamento (Vendas, Marketing, Suporte, Finanças) e atualizada a cada mudança técnica.", ex: "Utilize o Construtor de SOPs da plataforma para criar seu primeiro processo documentado.", checklist: ["Categorizar SOPs por setor da empresa", "Revisar SOPs a cada 3 meses", "Garantir acesso fácil a todos os colaboradores"] },
+                    { id: "m10_l8", title: "8. Construtor de Procedimentos e Processos HARD", obj: "Cadastrar e exportar seus manuais operacionais diretamente no sistema.", content: "Acesse a ferramenta 'Biblioteca de Processos / Construtor de SOPs' nesta plataforma para salvar, editar, organizar e exportar os manuais oficiais da sua operação digital.", ex: "Crie, salve e visualize seu primeiro SOP oficial no Construtor de SOPs.", checklist: ["Preencher todos os campos do Construtor de SOPs", "Salvar o processo no banco local", "Exportar a biblioteca para backup da empresa"] }
+                ]
+            },
+            {
+                id: 11,
+                title: "Crescimento e Escala Sustentável em 90 Dias",
+                icon: "🚀",
+                desc: "Planeje a expansão com base em capacidade operacional, caixa sustentável e experimentos.",
+                tool: "growth_90",
+                lessons: [
+                    { id: "m11_l1", title: "1. O real significado de Escalar um Negócio", obj: "Diferenciar crescimento de receita de escala operacional com lucro.", content: "Crescer significa aumentar receita e custos na mesma proporção. Escalar significa aumentar a receita exponencialmente enquanto os custos operacionais crescem de forma marginal. Aumentar faturamento sem aumentar a margem de lucro só aumenta os seus problemas.", ex: "Avalie se seu aumento recente de vendas gerou mais lucro líquido real ou apenas mais trabalho.", checklist: ["Analisar margem líquida durante fases de crescimento", "Verificar se a estrutura aguentaria o dobro de vendas", "Proteger a margem líquida em primeiro lugar"] },
+                    { id: "m11_l2", title: "2. Avaliação de Prontidão da Operação para Escala", obj: "Checklist de pré-requisitos antes de aumentar o investimento.", content: "Só autorize a escala se preencher os requisitos: 1. Oferta com conversão validada; 2. CAC menor que 1/3 do LTV; 3. Suporte/Entrega funcionando sem gargalos graves; 4. Caixa com reserva de emergência estabelecida.", ex: "Verifique quais dos 4 pré-requisitos de escala sua empresa já atende.", checklist: ["Conferir taxa de conversão validada", "Validar indicador LTV / CAC", "Confirmar estabilidade da entrega e suporte"] },
+                    { id: "m11_l3", title: "3. Capacidade Operacional e Limites de Qualidade", obj: "Evitar o colapso do atendimento e aumento de refunds durante picos de vendas.", content: "Vender 1.000 unidades do seu serviço ou curso em um dia parece ótimo, mas se sua equipe só consegue atender 100 com qualidade, os outros 900 se tornarão clientes insatisfeitos, refunds e detratores de marca.", ex: "Defina a capacidade máxima diária de atendimento com qualidade da sua estrutura atual.", checklist: ["Mapear limite de alunos/clientes por atendente", "Estabelecer teto de vendas por lote/período", "Prever contratações de suporte pré-escala"] },
+                    { id: "m11_l4", title: "4. Escalar a Oferta Atual vs. Lançar Novos Produtos", obj: "Focar na alavanca de maior retorno antes de criar complexidade.", content: "A tendência do empreendedor é criar novos cursos ou serviços quando as vendas caem. Na maioria das vezes, é 10x mais lucrativo otimizar a distribuição da oferta atual do que criar um novo produto do zero.", ex: "Analisar se sua oferta principal já atingiu o teto real do mercado ou se falta distribuição.", checklist: ["Exaurir canais da oferta atual", "Otimizar o funil existente", "Lançar novos produtos apenas com a oferta principal madura"] },
+                    { id: "m11_l5", title: "5. Redução de Riscos de Concentração na Escala", obj: "Expandir equipe e canais mantendo o controle estratégico.", content: "Na fase de escala, não dependa de um único comprador top de linha, de um único gestor de tráfego ou de uma única conta de anúncios. Dilua os riscos operacionais à medida que a empresa cresce.", ex: "Identifique onde está a maior concentração de risco no seu crescimento.", checklist: ["Diversificar fontes de tráfego", "Treinar substitutos operacionais internos", "Proteger o IP e ativos da empresa"] },
+                    { id: "m11_l6", title: "6. Estruturação de Experimentos de Escala Controlados", obj: "Testar aumentos de investimento em ciclos curtos de validação.", content: "Não dobre o orçamento de tráfego do dia para a noite. Faça testes de escala em ciclos de 14 dias: Aumente o orçamento em 30%, observe a degradação de CPA e margem, e estabilize antes de dar o próximo passo.", ex: "Defina o orçamento para o seu próximo experimento de escala de 14 dias.", checklist: ["Definir teto de orçamento para o teste de escala", "Acompanhar variação do CPA diariamente", "Pausar ou consolidar de acordo com o resultado do ciclo"] },
+                    { id: "m11_l7", title: "7. Critérios de decisão para Ampliar ou Recuar", obj: "Tomar atitudes frias com base em dados no meio da expansão.", content: "Se durante o teste de escala o CPA subir mais que 40% e a taxa de conversão despencar, RECUE o orçamento para o nível anterior imediatamente. Estabilize o funil antes de tentar escalar novamente.", ex: "Defina o limite exato de deterioração de CPA que fará você recuar o orçamento.", checklist: ["Estabelecer o CPA Limite de escala", "Definir gatilho automático de recuo de budget", "Manter a disciplina sem agir por impulso"] },
+                    { id: "m11_l8", title: "8. Construção do Plano de Escala de 90 Dias HARD", obj: "Definir metas, gargalos e ações para o próximo trimestre.", content: "O plano de 90 dias conecta sua visão de futuro com a execução semanal. Ele define: Meta de faturamento trimestral, Gargalo principal a resolver, Métrica-chave de acompanhamento e 3 Projetos Prioritários.", ex: "Utilize o Planejador de Escala de 90 Dias nesta plataforma.", checklist: ["Preencher a meta de faturamento trimestral", "Identificar o gargalo número 1 do trimestre", "Listar os 3 projetos prioritários e prazos"] },
+                    { id: "m11_l9", title: "9. Execução e Revisão no Planejador de 90 Dias", obj: "Consolidar o plano de expansão no painel da plataforma.", content: "Acesse a ferramenta 'Planejador de Escala de 90 Dias' para salvar seu plano trimestral, acompanhar a execução e manter o foco nas alavancas reais de crescimento.", ex: "Cadastre e salve suas metas do trimestre no planejador de escala.", checklist: ["Preencher todos os campos do planejador", "Revisar o progresso a cada 30 dias", "Ajustar projetos conforme os aprendizados"] }
+                ]
+            },
+            {
+                id: 12,
+                title: "Plano de Execução Prático HARD (30 Dias)",
+                icon: "🗓️",
+                desc: "Roteiro dia a dia em 4 semanas estruturadas para transformar a operação da sua empresa.",
+                tool: "roadmap_30",
+                lessons: [
+                    { id: "m12_l1", title: "Semana 1: Diagnóstico e Mapeamento Operacional", obj: "Dominar os 7 primeiros dias do plano de transformação.", content: "Semana 1 e focada em encarar os números reais da empresa. Dia 1: Mapeamento do fluxo atual; Dia 2: Levantamento do DRE do último mês; Dia 3: Análise do gargalo principal do funil; Dia 4: Auditoria de anúncios e CPA; Dia 5: Revisão de ofertas e entregáveis; Dia 6: Entrevistas com clientes cancelados/insatisfeitos; Dia 7: Consolidação do Diagnóstico Inicial.", ex: "Execute as tarefas dos Dias 1 a 7 na ferramenta de Execução de 30 Dias.", checklist: ["Concluir os registros do Dia 1 ao Dia 7", "Cadastrar os gargalos reais identificados", "Acompanhar seu checklist diário no painel"] },
+                    { id: "m12_l2", title: "Semana 2: Estruturação e Ajuste de Processos", obj: "Implementar organização, CRM e padronização das rotinas.", content: "Semana 2 reestrutura a casa. Dia 8: Implantação do CRM e limpeza da base de leads; Dia 9: Criação do checklist de follow-up comercial; Dia 10: Documentação do primeiro SOP crítico; Dia 11: Otimização da velocidade da página de vendas; Dia 12: Configuração do Painel de Métricas; Dia 13: Ajuste na precificação e margem de contribuição; Dia 14: Revisão da Semana 2.", ex: "Complete as metas e checklists do Dia 8 ao Dia 14 no roteiro.", checklist: ["Limpar o pipeline comercial no CRM", "Documentar 1 SOP essencial no Construtor", "Preencher dados de métricas e margem"] },
+                    { id: "m12_l3", title: "Semana 3: Experimentos Controlados e Testes", obj: "Colocar novas hipóteses de tráfego, oferta e conversão para rodar.", content: "Semana 3 coloca o mercado à prova. Dia 15: Lançamento do Teste de 3 novos Criativos de anúncios; Dia 16: Teste de nova Headline ou ângulo na página; Dia 17: Disparo de campanha de recuperação de leads parados no CRM; Dia 18: Teste de um Order Bump ou Upsell simples no checkout; Dia 19: Pesquisa de NPS com clientes ativos; Dia 20: Análise parcial dos experimentos; Dia 21: Consolidação da Semana 3.", ex: "Execute e registe os resultados dos testes do Dia 15 ao Dia 21.", checklist: ["Rodar teste de criativos com stop-loss", "Ativar recuperação de leads inativos", "Coletar primeiras respostas do NPS"] },
+                    { id: "m12_l4", title: "Semana 4: Otimização, Consolidação e Próximo Ciclo", obj: "Analisar os aprendizados do mês e desenhar os próximos 30 dias.", content: "Semana 4 consolida a nova operação HARD. Dia 22: Análise final dos testes A/B da Semana 3; Dia 23: Desligamento definitivo de canais e campanhas deficitárias; Dia 24: Atualização da Biblioteca de SOPs com novos aprendizados; Dia 25: Fechamento financeiro com DRE acumulado dos 30 dias; Dia 26: Reunião executiva de resultados e margem final; Dia 27: Ajustes no mapa operacional; Dia 28: Definição das metas dos próximos 30 dias; Dia 29: Backup de dados; Dia 30: Conclusão do Primeiro Ciclo HARD.", ex: "Finalize todos os 30 dias no painel de Execução Prática.", checklist: ["Concluir o log dos 30 dias de execução", "Realizar o fechamento do DRE mensal real", "Gerar o backup completo em JSON dos seus dados"] }
+                ]
+            }
+        ];
+
+        /* ==========================================================================
+           3. UI NAVIGATION & ROUTING
+           ========================================================================== */
+        function navigate(view, params = {}) {
+            const content = document.getElementById('content-area');
+            
+            // Update active nav styling
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-hard-emerald/10', 'text-hard-neon', 'border', 'border-hard-emerald/20');
+                btn.classList.add('text-hard-muted');
+                if (btn.dataset.nav === view) {
+                    btn.classList.add('bg-hard-emerald/10', 'text-hard-neon', 'border', 'border-hard-emerald/20');
+                    btn.classList.remove('text-hard-muted');
+                }
+            });
+
+            window.scrollTo(0, 0);
+
+            switch(view) {
+                case 'dashboard':
+                    renderDashboard(content);
+                    break;
+                case 'modules':
+                    renderModules(content, params.moduleId, params.lessonId);
+                    break;
+                case 'tools':
+                    renderToolsCenter(content, params.toolId);
+                    break;
+                case 'metrics':
+                    renderMetricsView(content);
+                    break;
+                case 'crm':
+                    renderCRMView(content);
+                    break;
+                case 'finance':
+                    renderFinanceView(content);
+                    break;
+                case 'processes':
+                    renderProcessesView(content);
+                    break;
+                case 'roadmap':
+                    renderRoadmapView(content);
+                    break;
+                case 'notes':
+                    renderNotesView(content);
+                    break;
+                case 'backup':
+                    renderBackupView(content);
+                    break;
+                default:
+                    renderDashboard(content);
+            }
+        }
+
+        /* ==========================================================================
+           4. RENDERERS FOR EACH VIEW
+           ========================================================================== */
+
+        // --- DASHBOARD ---
+        function renderDashboard(container) {
+            const totalLessons = MODULES.reduce((acc, m) => acc + m.lessons.length, 0);
+            const completedCount = state.completedLessons.length;
+            const progressPct = Math.round((completedCount / totalLessons) * 100) || 0;
+
+            // Simple SVG chart renderer based on state metrics or dummy curve if zero
+            const rev = state.metrics.revenue || 0;
+            const inv = state.metrics.investment || 0;
+            const net = rev - state.metrics.costs - inv;
+
+            container.innerHTML = `
+                <!-- Top Greeting Banner -->
+                <div class="bg-gradient-to-r from-hard-card via-hard-panel to-hard-card border border-hard-border p-6 md:p-8 rounded-2xl relative overflow-hidden emerald-glow-sm">
+                    <div class="relative z-10 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-hard-neon px-2.5 py-1 bg-hard-emerald/10 border border-hard-emerald/20 rounded-md">Centro de Comando Operacional</span>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-2">Bem-vindo(a), <span class="text-hard-neon">${escapeHtml(state.studentName)}</span></h2>
+                            <p class="text-xs md:text-sm text-hard-muted mt-1">Sua mentoria estratégica de escala e processos baseada em evidências.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="navigate('roadmap')" class="px-4 py-2.5 bg-hard-panel border border-hard-border hover:border-hard-emerald text-xs font-semibold rounded-xl transition text-white flex items-center gap-2">
+                                <span>🗓️</span> Plano 30 Dias
+                            </button>
+                            <button onclick="navigate('modules')" class="px-4 py-2.5 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition flex items-center gap-2">
+                                <span>🚀</span> Continuar Aulas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic KPI Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-hard-card border border-hard-border p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs text-hard-muted font-medium">Progresso Global</span>
+                            <span class="text-lg">🎯</span>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-2xl font-black text-white">${progressPct}%</p>
+                            <p class="text-[11px] text-hard-muted mt-0.5">${completedCount} de ${totalLessons} aulas concluídas</p>
+                        </div>
+                        <div class="w-full bg-hard-panel h-1.5 rounded-full mt-3 overflow-hidden border border-hard-border">
+                            <div class="bg-hard-neon h-full transition-all" style="width: ${progressPct}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-hard-card border border-hard-border p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs text-hard-muted font-medium">Investimento em Tráfego</span>
+                            <span class="text-lg">📢</span>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-2xl font-black text-white">R$ ${formatMoney(inv)}</p>
+                            <p class="text-[11px] text-hard-muted mt-0.5">Dado informado no Painel</p>
+                        </div>
+                        <div class="text-[10px] text-hard-emerald font-semibold mt-2">
+                            ${inv > 0 ? '✓ Atualizado' : '⚠️ Zerado - Preencha no Painel'}
+                        </div>
+                    </div>
+
+                    <div class="bg-hard-card border border-hard-border p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs text-hard-muted font-medium">Receita Bruta Registrada</span>
+                            <span class="text-lg">💵</span>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-2xl font-black text-white">R$ ${formatMoney(rev)}</p>
+                            <p class="text-[11px] text-hard-muted mt-0.5">Faturamento bruto informado</p>
+                        </div>
+                        <div class="text-[10px] text-hard-neon font-semibold mt-2">
+                            ${rev > 0 ? '✓ Atualizado' : '⚠️ Zerado - Preencha no Painel'}
+                        </div>
+                    </div>
+
+                    <div class="bg-hard-card border border-hard-border p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs text-hard-muted font-medium">Resultado Estimado</span>
+                            <span class="text-lg">⚖️</span>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-2xl font-black ${net >= 0 ? 'text-hard-neon' : 'text-red-400'}">R$ ${formatMoney(net)}</p>
+                            <p class="text-[11px] text-hard-muted mt-0.5">Receita (-) Custos (-) Tráfego</p>
+                        </div>
+                        <div class="text-[10px] text-hard-muted mt-2">
+                            Margem: ${rev > 0 ? Math.round((net / rev) * 100) + '%' : '0%'}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Section: Real Data Chart & Active Tasks -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- SVG Chart Box (2 cols) -->
+                    <div class="lg:col-span-2 bg-hard-card border border-hard-border p-6 rounded-2xl flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                    <span>📈</span> Desempenho Operacional Registrado
+                                </h3>
+                                <p class="text-xs text-hard-muted">Gráfico gerado exclusivamente com base nos dados que você cadastra na plataforma.</p>
+                            </div>
+                            <button onclick="navigate('metrics')" class="text-xs text-hard-neon hover:underline font-semibold">Editar Dados →</button>
+                        </div>
+
+                        <!-- Native SVG Dynamic Chart -->
+                        <div class="h-52 w-full bg-hard-panel/50 border border-hard-border rounded-xl p-4 flex items-end justify-between relative overflow-hidden">
+                            ${renderDashboardSVGChart()}
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 mt-4 text-center text-xs">
+                            <div class="bg-hard-panel p-2 rounded-lg border border-hard-border">
+                                <span class="text-hard-muted block text-[10px]">Leads Totais</span>
+                                <span class="font-bold text-white">${state.metrics.leads || 0}</span>
+                            </div>
+                            <div class="bg-hard-panel p-2 rounded-lg border border-hard-border">
+                                <span class="text-hard-muted block text-[10px]">Vendas Realizadas</span>
+                                <span class="font-bold text-white">${state.metrics.sales || 0}</span>
+                            </div>
+                            <div class="bg-hard-panel p-2 rounded-lg border border-hard-border">
+                                <span class="text-hard-muted block text-[10px]">Taxa Conv. Lead/Venda</span>
+                                <span class="font-bold text-hard-neon">${state.metrics.leads > 0 ? ((state.metrics.sales / state.metrics.leads) * 100).toFixed(1) + '%' : '0%'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Objetivos da Semana & Checklists (1 col) -->
+                    <div class="bg-hard-card border border-hard-border p-6 rounded-2xl flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <span>🎯</span> Metas Semanais
+                            </h3>
+                            <button onclick="addGoalPrompt()" class="text-xs bg-hard-panel border border-hard-border hover:border-hard-emerald px-2 py-1 rounded text-hard-neon">+ Adicionar</button>
+                        </div>
+
+                        <div class="space-y-3 flex-1 overflow-y-auto max-h-60" id="goals-container">
+                            ${state.goals.map(g => `
+                                <div class="flex items-start gap-3 p-3 bg-hard-panel/50 border border-hard-border rounded-xl">
+                                    <input type="checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoal(${g.id})" class="mt-1 rounded bg-hard-bg border-hard-border text-hard-emerald focus:ring-0">
+                                    <span class="text-xs ${g.done ? 'line-through text-hard-muted' : 'text-white'} flex-1">${escapeHtml(g.text)}</span>
+                                    <button onclick="deleteGoal(${g.id})" class="text-hard-muted hover:text-red-400 text-xs">✕</button>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-hard-border">
+                            <p class="text-xs text-hard-muted flex items-center gap-1.5">
+                                <span>💾</span> Os dados são salvos localmente neste navegador.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Shortcuts to Tools -->
+                <div>
+                    <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                        <span>⚡</span> Atalhos para Ferramentas Operacionais
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                        <button onclick="navigate('tools', {toolId: 'map_op'})" class="p-4 bg-hard-card border border-hard-border hover:border-hard-emerald rounded-xl text-center transition group">
+                            <span class="text-2xl block mb-1 group-hover:scale-110 transition-transform">🏛️</span>
+                            <span class="text-xs font-semibold text-white block">Mapa da Operação</span>
+                        </button>
+                        <button onclick="navigate('tools', {toolId: 'offer_builder'})" class="p-4 bg-hard-card border border-hard-border hover:border-hard-emerald rounded-xl text-center transition group">
+                            <span class="text-2xl block mb-1 group-hover:scale-110 transition-transform">💎</span>
+                            <span class="text-xs font-semibold text-white block">Construtor Ofertas</span>
+                        </button>
+                        <button onclick="navigate('tools', {toolId: 'funnel_calc'})" class="p-4 bg-hard-card border border-hard-border hover:border-hard-emerald rounded-xl text-center transition group">
+                            <span class="text-2xl block mb-1 group-hover:scale-110 transition-transform">⚡</span>
+                            <span class="text-xs font-semibold text-white block">Funil & Conversão</span>
+                        </button>
+                        <button onclick="navigate('crm')" class="p-4 bg-hard-card border border-hard-border hover:border-hard-emerald rounded-xl text-center transition group">
+                            <span class="text-2xl block mb-1 group-hover:scale-110 transition-transform">💼</span>
+                            <span class="text-xs font-semibold text-white block">CRM Comercial</span>
+                        </button>
+                        <button onclick="navigate('finance')" class="p-4 bg-hard-card border border-hard-border hover:border-hard-emerald rounded-xl text-center transition group">
+                            <span class="text-2xl block mb-1 group-hover:scale-110 transition-transform">💰</span>
+                            <span class="text-xs font-semibold text-white block">Simulador DRE</span>
+                        </button>
+                        <button onclick="navigate('processes')" class="p-4 bg-hard-card border border-hard-border hover:border-hard-emerald rounded-xl text-center transition group">
+                            <span class="text-2xl block mb-1 group-hover:scale-110 transition-transform">⚙️</span>
+                            <span class="text-xs font-semibold text-white block">Construtor SOPs</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDashboardSVGChart() {
+            const rev = state.metrics.revenue || 0;
+            const inv = state.metrics.investment || 0;
+            const costs = state.metrics.costs || 0;
+
+            if (rev === 0 && inv === 0) {
+                return `
+                    <div class="w-full h-full flex flex-col items-center justify-center text-center p-4">
+                        <span class="text-2xl mb-1">📊</span>
+                        <p class="text-xs font-semibold text-white">Nenhum dado registrado para exibir no gráfico</p>
+                        <p class="text-[11px] text-hard-muted mt-1">Acesse o 'Painel de Métricas' no menu lateral e preencha seus números reais para visualizar os gráficos.</p>
+                    </div>
+                `;
+            }
+
+            const maxVal = Math.max(rev, inv, costs, 100);
+            const hRev = Math.round((rev / maxVal) * 140);
+            const hInv = Math.round((inv / maxVal) * 140);
+            const hCost = Math.round((costs / maxVal) * 140);
+
+            return `
+                <div class="w-full h-full flex items-end justify-around pt-6 px-4">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="text-[10px] font-bold text-blue-400">R$ ${formatMoney(inv)}</span>
+                        <div class="w-12 bg-blue-500/80 rounded-t-lg transition-all duration-500" style="height: ${Math.max(hInv, 10)}px"></div>
+                        <span class="text-[10px] text-hard-muted font-medium">Tráfego</span>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="text-[10px] font-bold text-amber-400">R$ ${formatMoney(costs)}</span>
+                        <div class="w-12 bg-amber-500/80 rounded-t-lg transition-all duration-500" style="height: ${Math.max(hCost, 10)}px"></div>
+                        <span class="text-[10px] text-hard-muted font-medium">Custos</span>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="text-[10px] font-bold text-hard-neon">R$ ${formatMoney(rev)}</span>
+                        <div class="w-12 bg-hard-neon/80 rounded-t-lg transition-all duration-500 shadow-lg shadow-hard-neon/20" style="height: ${Math.max(hRev, 10)}px"></div>
+                        <span class="text-[10px] text-hard-muted font-medium">Receita Bruta</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- MODULES & LESSONS VIEW ---
+        function renderModules(container, activeModId, activeLessonId) {
+            const modId = activeModId ? parseInt(activeModId) : 1;
+            const currentModule = MODULES.find(m => m.id === modId) || MODULES[0];
+            const currentLesson = activeLessonId 
+                ? currentModule.lessons.find(l => l.id === activeLessonId) || currentModule.lessons[0]
+                : currentModule.lessons[0];
+
+            const isCompleted = state.completedLessons.includes(currentLesson.id);
+            const noteText = state.lessonNotes[currentLesson.id] || '';
+
+            container.innerHTML = `
+                <!-- Module Selection Bar -->
+                <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                    ${MODULES.map(m => `
+                        <button onclick="navigate('modules', {moduleId: ${m.id}})" class="flex-shrink-0 px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-2 ${m.id === currentModule.id ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon shadow-lg' : 'bg-hard-card border-hard-border text-hard-muted hover:text-white'}">
+                            <span>${m.icon}</span>
+                            <span>Mód ${m.id}</span>
+                        </button>
+                    `).join('')}
+                </div>
+
+                <!-- Main Module Header -->
+                <div class="bg-hard-card border border-hard-border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${currentModule.icon}</span>
+                            <span class="text-xs font-bold text-hard-neon uppercase tracking-wider">Módulo ${currentModule.id} de 12</span>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-black text-white mt-1">${escapeHtml(currentModule.title)}</h2>
+                        <p class="text-xs text-hard-muted mt-1 max-w-2xl">${escapeHtml(currentModule.desc)}</p>
+                    </div>
+                    <button onclick="navigate('tools', {toolId: '${currentModule.tool}'})" class="px-4 py-2.5 bg-hard-panel border border-hard-border hover:border-hard-emerald text-xs font-bold rounded-xl text-hard-neon transition flex items-center gap-2 flex-shrink-0">
+                        <span>🛠️</span> Abrir Ferramenta do Módulo
+                    </button>
+                </div>
+
+                <!-- Lesson Workspace Grid (Sidebar + Content) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                    <!-- Lessons List Sidebar (4 cols) -->
+                    <div class="lg:col-span-4 bg-hard-card border border-hard-border rounded-2xl p-4 flex flex-col">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-hard-muted px-2 mb-3">Aulas deste Módulo</h3>
+                        <div class="space-y-1.5 flex-1 overflow-y-auto max-h-[600px]">
+                            ${currentModule.lessons.map((l, idx) => {
+                                const done = state.completedLessons.includes(l.id);
+                                const isActive = l.id === currentLesson.id;
+                                return `
+                                    <button onclick="navigate('modules', {moduleId: ${currentModule.id}, lessonId: '${l.id}'})" class="w-full text-left p-3 rounded-xl border text-xs font-medium transition flex items-center justify-between ${isActive ? 'bg-hard-panel border-hard-emerald text-white' : 'bg-hard-panel/30 border-hard-border text-hard-muted hover:text-white'}">
+                                        <div class="flex items-center gap-2.5 overflow-hidden">
+                                            <span class="${done ? 'text-hard-neon' : 'text-hard-muted'}">${done ? '✓' : idx + 1}</span>
+                                            <span class="truncate">${escapeHtml(l.title)}</span>
+                                        </div>
+                                        ${done ? '<span class="text-[10px] bg-hard-emerald/20 text-hard-neon px-2 py-0.5 rounded font-semibold">Feito</span>' : ''}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Lesson View Content (8 cols) -->
+                    <div class="lg:col-span-8 bg-hard-card border border-hard-border rounded-2xl p-6 space-y-6">
+                        
+                        <!-- Lesson Header & Complete Button -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hard-border pb-4">
+                            <div>
+                                <span class="text-[10px] font-bold text-hard-neon uppercase tracking-wider">Aula Selecionada</span>
+                                <h3 class="text-xl font-bold text-white mt-0.5">${escapeHtml(currentLesson.title)}</h3>
+                            </div>
+                            <button onclick="toggleLessonCompletion('${currentLesson.id}')" class="px-5 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 ${isCompleted ? 'bg-hard-emerald/20 border border-hard-emerald text-hard-neon' : 'bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black hover:opacity-90'}">
+                                <span>${isCompleted ? '✓ Aula Concluída' : 'Marcar como Concluída'}</span>
+                            </button>
+                        </div>
+
+                        <!-- Objective Badge -->
+                        <div class="bg-hard-panel/60 border border-hard-border rounded-xl p-4 text-xs">
+                            <span class="font-bold text-hard-neon uppercase tracking-wider block mb-1">🎯 Objetivo da Aula:</span>
+                            <p class="text-white">${escapeHtml(currentLesson.obj)}</p>
+                        </div>
+
+                        <!-- Full In-Depth Lesson Content -->
+                        <div class="space-y-4 text-sm text-gray-300 leading-relaxed">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Conteúdo Estratégico:</h4>
+                            <div class="bg-hard-panel/30 border border-hard-border p-5 rounded-xl space-y-3">
+                                <p>${escapeHtml(currentLesson.content)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Practical Exercise & Example -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-hard-panel/40 border border-hard-border p-4 rounded-xl space-y-2">
+                                <span class="font-bold text-amber-400 flex items-center gap-1.5"><span>🧪</span> Exercício Prático:</span>
+                                <p class="text-hard-text">${escapeHtml(currentLesson.ex)}</p>
+                            </div>
+                            <div class="bg-hard-panel/40 border border-hard-border p-4 rounded-xl space-y-2">
+                                <span class="font-bold text-hard-neon flex items-center gap-1.5"><span>📋</span> Checklist da Aula:</span>
+                                <ul class="space-y-1 text-hard-muted">
+                                    ${currentLesson.checklist.map(item => `<li class="flex items-center gap-1.5"><span>•</span> ${escapeHtml(item)}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Personal Lesson Notes Input -->
+                        <div class="pt-4 border-t border-hard-border">
+                            <label class="block text-xs font-bold text-white mb-2 flex items-center gap-2">
+                                <span>📝</span> Anotações da Sua Operação para esta Aula:
+                            </label>
+                            <textarea id="lesson-note-input" onblur="saveLessonNote('${currentLesson.id}')" rows="3" placeholder="Escreva aqui os insights, decisões ou dúvidas levantadas durante esta aula..." class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald transition">${escapeHtml(noteText)}</textarea>
+                            <p class="text-[10px] text-hard-muted mt-1">Sua anotação é salva automaticamente ao clicar fora da caixa.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        }
+
+        // --- TOOLS CENTER & INDIVIDUAL TOOLS ---
+        function renderToolsCenter(container, activeToolId) {
+            const toolId = activeToolId || 'map_op';
+
+            container.innerHTML = `
+                <!-- Tools Navigation Tabs -->
+                <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                    <button onclick="navigate('tools', {toolId: 'map_op'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'map_op' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">🏛️ Mapa Operacional</button>
+                    <button onclick="navigate('tools', {toolId: 'channel_matrix'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'channel_matrix' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">🌐 Matriz de Canais</button>
+                    <button onclick="navigate('tools', {toolId: 'offer_builder'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'offer_builder' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">💎 Construtor de Ofertas</button>
+                    <button onclick="navigate('tools', {toolId: 'funnel_calc'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'funnel_calc' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">⚡ Calculadora de Funil</button>
+                    <button onclick="navigate('tools', {toolId: 'traffic_calc'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'traffic_calc' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">🎯 Tráfego & ROAS Real</button>
+                    <button onclick="navigate('tools', {toolId: 'feedback_panel'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'feedback_panel' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">❤️ Feedbacks & NPS</button>
+                    <button onclick="navigate('tools', {toolId: 'growth_90'})" class="px-4 py-2.5 rounded-xl border text-xs font-bold transition flex-shrink-0 ${toolId === 'growth_90' ? 'bg-hard-emerald/20 border-hard-emerald text-hard-neon' : 'bg-hard-card border-hard-border text-hard-muted'}">🚀 Plano 90 Dias</button>
+                </div>
+
+                <!-- Active Tool View Area -->
+                <div id="active-tool-container" class="bg-hard-card border border-hard-border rounded-2xl p-6">
+                    ${renderSpecificTool(toolId)}
+                </div>
+            `;
+        }
+
+        function renderSpecificTool(toolId) {
+            switch(toolId) {
+                case 'map_op':
+                    return renderMapOpTool();
+                case 'channel_matrix':
+                    return renderChannelMatrixTool();
+                case 'offer_builder':
+                    return renderOfferBuilderTool();
+                case 'funnel_calc':
+                    return renderFunnelTool();
+                case 'traffic_calc':
+                    return renderTrafficCalcTool();
+                case 'feedback_panel':
+                    return renderFeedbackTool();
+                case 'growth_90':
+                    return renderGrowth90Tool();
+                default:
+                    return renderMapOpTool();
+            }
+        }
+
+        // TOOL 1: MAPA DA OPERAÇÃO
+        function renderMapOpTool() {
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 1</span>
+                        <h3 class="text-xl font-bold text-white mt-1">Mapa Operacional do Negócio</h3>
+                        <p class="text-xs text-hard-muted mt-1">Cadastre as etapas da sua operação, identificando responsáveis, softwares e o principal gargalo de cada fase.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border space-y-3">
+                            <span class="text-xs font-bold text-white block">1. Atração & Tráfego</span>
+                            <textarea id="map-step-1" rows="3" placeholder="Ex: Anúncios na Meta Ads + Postagens no Instagram. Resp: Carlos. Ferramenta: Canva/CapCut." class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">${escapeHtml(localStorage.getItem('hard_map_step_1') || '')}</textarea>
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border space-y-3">
+                            <span class="text-xs font-bold text-white block">2. Conversão & Vendas</span>
+                            <textarea id="map-step-2" rows="3" placeholder="Ex: VSL na página de vendas + Atendimento WhatsApp. Resp: Ana. Ferramenta: CRM Local." class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">${escapeHtml(localStorage.getItem('hard_map_step_2') || '')}</textarea>
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border space-y-3">
+                            <span class="text-xs font-bold text-white block">3. Entrega & Pós-Venda</span>
+                            <textarea id="map-step-3" rows="3" placeholder="Ex: Acesso por e-mail + Suporte em até 24h. Resp: Marcos. Ferramenta: Hotmart/Kiwify." class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">${escapeHtml(localStorage.getItem('hard_map_step_3') || '')}</textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-white mb-2">🔎 Identificação do Gargalo Número 1 da Operação Atual:</label>
+                        <input type="text" id="map-bottleneck" value="${escapeHtml(localStorage.getItem('hard_map_bottleneck') || '')}" placeholder="Ex: Apenas 2% das pessoas que clicam no anúncio entram em contato no WhatsApp." class="w-full bg-hard-panel border border-hard-border rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                    </div>
+
+                    <button onclick="saveMapOpTool()" class="px-6 py-3 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition">
+                        Salvar Mapa Operacional
+                    </button>
+                </div>
+            `;
+        }
+
+        function saveMapOpTool() {
+            localStorage.setItem('hard_map_step_1', document.getElementById('map-step-1').value);
+            localStorage.setItem('hard_map_step_2', document.getElementById('map-step-2').value);
+            localStorage.setItem('hard_map_step_3', document.getElementById('map-step-3').value);
+            localStorage.setItem('hard_map_bottleneck', document.getElementById('map-bottleneck').value);
+            showToast('Mapa Operacional salvo com sucesso!');
+        }
+
+        // TOOL 2: MATRIZ DE CANAIS
+        function renderChannelMatrixTool() {
+            const channels = JSON.parse(localStorage.getItem('hard_channels') || '[]');
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 2</span>
+                            <h3 class="text-xl font-bold text-white mt-1">Matriz Comparativa de Canais de Aquisição</h3>
+                        </div>
+                        <button onclick="addChannelPrompt()" class="px-4 py-2 bg-hard-panel border border-hard-border hover:border-hard-emerald text-xs font-bold text-hard-neon rounded-xl">+ Adicionar Canal</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-hard-muted border-collapse">
+                            <thead>
+                                <tr class="bg-hard-panel border-b border-hard-border text-white font-bold">
+                                    <th class="p-3">Canal</th>
+                                    <th class="p-3">Público / Intenção</th>
+                                    <th class="p-3">Custo Est.</th>
+                                    <th class="p-3">Tempo Exec.</th>
+                                    <th class="p-3">Resultado Observado</th>
+                                    <th class="p-3">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${channels.length === 0 ? `
+                                    <tr>
+                                        <td colspan="6" class="p-6 text-center text-hard-muted">Nenhum canal cadastrado ainda. Clique em "+ Adicionar Canal".</td>
+                                    </tr>
+                                ` : channels.map((c, i) => `
+                                    <tr class="border-b border-hard-border/50 hover:bg-hard-panel/20">
+                                        <td class="p-3 font-bold text-white">${escapeHtml(c.name)}</td>
+                                        <td class="p-3">${escapeHtml(c.audience)}</td>
+                                        <td class="p-3">${escapeHtml(c.cost)}</td>
+                                        <td class="p-3">${escapeHtml(c.time)}</td>
+                                        <td class="p-3 text-hard-neon">${escapeHtml(c.result)}</td>
+                                        <td class="p-3">
+                                            <button onclick="deleteChannel(${i})" class="text-red-400 hover:underline text-[11px]">Excluir</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addChannelPrompt() {
+            const name = prompt('Nome do Canal (Ex: Meta Ads, SEO Google, Prospecção Direct):');
+            if (!name) return;
+            const audience = prompt('Público/Intenção (Ex: Alta Intenção / Busca ativa):') || 'Indefinido';
+            const cost = prompt('Custo Estimado Mensal (Ex: R$ 2.000 ou Orgânico):') || '0';
+            const time = prompt('Tempo Semanal gasto (Ex: 5 horas/sem):') || '1h';
+            const result = prompt('Resultado Observado (Ex: 40 leads/mês):') || 'Em análise';
+
+            const channels = JSON.parse(localStorage.getItem('hard_channels') || '[]');
+            channels.push({ name, audience, cost, time, result });
+            localStorage.setItem('hard_channels', JSON.stringify(channels));
+            navigate('tools', {toolId: 'channel_matrix'});
+            showToast('Canal cadastrado!');
+        }
+
+        function deleteChannel(idx) {
+            const channels = JSON.parse(localStorage.getItem('hard_channels') || '[]');
+            channels.splice(idx, 1);
+            localStorage.setItem('hard_channels', JSON.stringify(channels));
+            navigate('tools', {toolId: 'channel_matrix'});
+            showToast('Canal removido!');
+        }
+
+        // TOOL 3: CONSTRUTOR DE OFERTAS
+        function renderOfferBuilderTool() {
+            const currentOffer = state.offers[0] || {
+                target: '', problem: '', solution: '', diff: '', deliverables: '', price: 0, cost: 0, guarantee: ''
+            };
+
+            const margin = currentOffer.price > 0 ? currentOffer.price - currentOffer.cost : 0;
+            const marginPct = currentOffer.price > 0 ? Math.round((margin / currentOffer.price) * 100) : 0;
+
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 3</span>
+                        <h3 class="text-xl font-bold text-white mt-1">Construtor de Ofertas Irrecusáveis</h3>
+                        <p class="text-xs text-hard-muted mt-1">Configure todos os parâmetros da sua oferta e obtenha o cálculo de margem imediato.</p>
+                    </div>
+
+                    <form onsubmit="saveOfferForm(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Público-Alvo Específico</label>
+                                <input type="text" id="off-target" value="${escapeHtml(currentOffer.target)}" required placeholder="Ex: Gestores de e-commerce faturando > 20k/mês" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Problema Visceral Resolvido</label>
+                                <input type="text" id="off-problem" value="${escapeHtml(currentOffer.problem)}" required placeholder="Ex: Custo por lead explodindo no Facebook Ads" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Sua Solução / Método Proprietário</label>
+                                <input type="text" id="off-solution" value="${escapeHtml(currentOffer.solution)}" required placeholder="Ex: Método HARD de Validação de Criativos" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Diferencial Único</label>
+                                <input type="text" id="off-diff" value="${escapeHtml(currentOffer.diff)}" placeholder="Ex: Planilhas prontas e suporte individual em 24h" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Entregáveis do Produto (Bônus, Módulos, Encontros)</label>
+                            <textarea id="off-deliverables" rows="3" placeholder="Ex: 12 Módulos gravados + 4 Encontros ao vivo + Suporte de 1 ano" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">${escapeHtml(currentOffer.deliverables)}</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Preço de Venda (R$)</label>
+                                <input type="number" id="off-price" value="${currentOffer.price || ''}" required placeholder="997" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Custo Direto por Venda (R$)</label>
+                                <input type="number" id="off-cost" value="${currentOffer.cost || ''}" placeholder="150" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Garantia (Dias)</label>
+                                <input type="text" id="off-guarantee" value="${escapeHtml(currentOffer.guarantee)}" placeholder="7 dias incondicional" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                        </div>
+
+                        <!-- Calculated Summary Banner -->
+                        <div class="bg-hard-panel/80 border border-hard-border rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+                            <div>
+                                <span class="text-hard-muted">Margem Bruta por Unidade:</span>
+                                <span class="text-base font-bold text-hard-neon ml-2">R$ ${formatMoney(margin)} (${marginPct}%)</span>
+                            </div>
+                            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition">
+                                Salvar Oferta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function saveOfferForm(e) {
+            e.preventDefault();
+            const offer = {
+                target: document.getElementById('off-target').value,
+                problem: document.getElementById('off-problem').value,
+                solution: document.getElementById('off-solution').value,
+                diff: document.getElementById('off-diff').value,
+                deliverables: document.getElementById('off-deliverables').value,
+                price: parseFloat(document.getElementById('off-price').value) || 0,
+                cost: parseFloat(document.getElementById('off-cost').value) || 0,
+                guarantee: document.getElementById('off-guarantee').value
+            };
+            state.offers = [offer];
+            saveState();
+            showToast('Oferta salva com sucesso!');
+            navigate('tools', {toolId: 'offer_builder'});
+        }
+
+        // TOOL 4: CALCULADORA DE FUNIL
+        function renderFunnelTool() {
+            const fVis = parseFloat(localStorage.getItem('hard_funnel_vis')) || 0;
+            const fLead = parseFloat(localStorage.getItem('hard_funnel_lead')) || 0;
+            const fCheck = parseFloat(localStorage.getItem('hard_funnel_check')) || 0;
+            const fSale = parseFloat(localStorage.getItem('hard_funnel_sale')) || 0;
+
+            const txLead = fVis > 0 ? ((fLead / fVis) * 100).toFixed(1) : '0';
+            const txCheck = fLead > 0 ? ((fCheck / fLead) * 100).toFixed(1) : '0';
+            const txSale = fCheck > 0 ? ((fSale / fCheck) * 100).toFixed(1) : '0';
+            const txGlobal = fVis > 0 ? ((fSale / fVis) * 100).toFixed(2) : '0';
+
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 4</span>
+                        <h3 class="text-xl font-bold text-white mt-1">Calculadora & Visualizador de Funil</h3>
+                        <p class="text-xs text-hard-muted mt-1">Insira os volumes de cada etapa para identificar automaticamente as taxas de conversão e gargalos do funil.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">1. Visitantes da Página</label>
+                            <input type="number" id="fn-vis" value="${fVis || ''}" oninput="calcFunnel()" placeholder="10000" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">2. Leads / Inscritos</label>
+                            <input type="number" id="fn-lead" value="${fLead || ''}" oninput="calcFunnel()" placeholder="2500" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">3. Checkouts Iniciados</label>
+                            <input type="number" id="fn-check" value="${fCheck || ''}" oninput="calcFunnel()" placeholder="300" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">4. Vendas Concluídas</label>
+                            <input type="number" id="fn-sale" value="${fSale || ''}" oninput="calcFunnel()" placeholder="60" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                    </div>
+
+                    <!-- Visual Funnel Diagram -->
+                    <div class="bg-hard-panel/40 border border-hard-border rounded-2xl p-6 space-y-4">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Visualização do Fluxo de Conversão:</h4>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-white font-semibold">Taxa Visitante ➔ Lead</span>
+                                    <span class="text-hard-neon font-bold">${txLead}%</span>
+                                </div>
+                                <div class="w-full bg-hard-panel h-3 rounded-full overflow-hidden border border-hard-border">
+                                    <div class="bg-blue-500 h-full transition-all" style="width: ${Math.min(txLead, 100)}%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-white font-semibold">Taxa Lead ➔ Checkout</span>
+                                    <span class="text-hard-neon font-bold">${txCheck}%</span>
+                                </div>
+                                <div class="w-full bg-hard-panel h-3 rounded-full overflow-hidden border border-hard-border">
+                                    <div class="bg-amber-500 h-full transition-all" style="width: ${Math.min(txCheck, 100)}%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-white font-semibold">Taxa Checkout ➔ Venda</span>
+                                    <span class="text-hard-neon font-bold">${txSale}%</span>
+                                </div>
+                                <div class="w-full bg-hard-panel h-3 rounded-full overflow-hidden border border-hard-border">
+                                    <div class="bg-hard-neon h-full transition-all" style="width: ${Math.min(txSale, 100)}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-hard-card border border-hard-border rounded-xl flex justify-between items-center text-xs">
+                            <span class="text-hard-muted">Conversão Global do Funil (Visitante ➔ Venda):</span>
+                            <span class="text-base font-extrabold text-white">${txGlobal}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function calcFunnel() {
+            localStorage.setItem('hard_funnel_vis', document.getElementById('fn-vis').value);
+            localStorage.setItem('hard_funnel_lead', document.getElementById('fn-lead').value);
+            localStorage.setItem('hard_funnel_check', document.getElementById('fn-check').value);
+            localStorage.setItem('hard_funnel_sale', document.getElementById('fn-sale').value);
+            navigate('tools', {toolId: 'funnel_calc'});
+        }
+
+        // TOOL 5: TRÁFEGO E ROAS REAL
+        function renderTrafficCalcTool() {
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 6</span>
+                        <h3 class="text-xl font-bold text-white mt-1">Calculadora Avançada de Tráfego e ROAS</h3>
+                        <p class="text-xs text-hard-muted mt-1">Simule custos por clique (CPC), Custo por Aquisição (CPA), ROAS e margem líquida pós-anúncios.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Investimento em Tráfego (R$)</label>
+                            <input type="number" id="tf-inv" oninput="runTrafficSim()" placeholder="3000" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Cliques no Anúncio</label>
+                            <input type="number" id="tf-clicks" oninput="runTrafficSim()" placeholder="1500" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Vendas Geradas</label>
+                            <input type="number" id="tf-sales" oninput="runTrafficSim()" placeholder="30" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Preço do Produto (Ticket R$)</label>
+                            <input type="number" id="tf-ticket" oninput="runTrafficSim()" placeholder="497" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                        <div class="bg-hard-panel p-4 rounded-xl border border-hard-border">
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Custo Adicional por Unidade (R$)</label>
+                            <input type="number" id="tf-unitcost" oninput="runTrafficSim()" placeholder="50" class="w-full bg-hard-bg border border-hard-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+                    </div>
+
+                    <div class="bg-hard-card border border-hard-border p-6 rounded-2xl grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div class="bg-hard-panel p-3 rounded-xl border border-hard-border">
+                            <span class="text-[10px] text-hard-muted uppercase font-semibold">CPC Médio</span>
+                            <p id="res-cpc" class="text-lg font-extrabold text-white mt-1">R$ 0,00</p>
+                        </div>
+                        <div class="bg-hard-panel p-3 rounded-xl border border-hard-border">
+                            <span class="text-[10px] text-hard-muted uppercase font-semibold">CPA (Custo/Venda)</span>
+                            <p id="res-cpa" class="text-lg font-extrabold text-white mt-1">R$ 0,00</p>
+                        </div>
+                        <div class="bg-hard-panel p-3 rounded-xl border border-hard-border">
+                            <span class="text-[10px] text-hard-muted uppercase font-semibold">ROAS Bruto</span>
+                            <p id="res-roas" class="text-lg font-extrabold text-hard-neon mt-1">0.00x</p>
+                        </div>
+                        <div class="bg-hard-panel p-3 rounded-xl border border-hard-border">
+                            <span class="text-[10px] text-hard-muted uppercase font-semibold">Lucro Líquido Est.</span>
+                            <p id="res-net" class="text-lg font-extrabold text-white mt-1">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function runTrafficSim() {
+            const inv = parseFloat(document.getElementById('tf-inv').value) || 0;
+            const clicks = parseFloat(document.getElementById('tf-clicks').value) || 0;
+            const sales = parseFloat(document.getElementById('tf-sales').value) || 0;
+            const ticket = parseFloat(document.getElementById('tf-ticket').value) || 0;
+            const unitCost = parseFloat(document.getElementById('tf-unitcost').value) || 0;
+
+            const cpc = clicks > 0 ? (inv / clicks) : 0;
+            const cpa = sales > 0 ? (inv / sales) : 0;
+            const rev = sales * ticket;
+            const roas = inv > 0 ? (rev / inv) : 0;
+            const totalCosts = inv + (sales * unitCost);
+            const net = rev - totalCosts;
+
+            document.getElementById('res-cpc').innerText = 'R$ ' + formatMoney(cpc);
+            document.getElementById('res-cpa').innerText = 'R$ ' + formatMoney(cpa);
+            document.getElementById('res-roas').innerText = roas.toFixed(2) + 'x';
+            document.getElementById('res-net').innerText = 'R$ ' + formatMoney(net);
+        }
+
+        // TOOL 6: PAINEL DE FEEDBACKS & NPS
+        function renderFeedbackTool() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 8</span>
+                            <h3 class="text-xl font-bold text-white mt-1">Painel de Feedbacks e Qualidade</h3>
+                        </div>
+                        <button onclick="addFeedbackPrompt()" class="px-4 py-2 bg-hard-panel border border-hard-border hover:border-hard-emerald text-xs font-bold text-hard-neon rounded-xl">+ Novo Feedback</button>
+                    </div>
+
+                    <div class="space-y-3">
+                        ${state.feedbacks.length === 0 ? `
+                            <div class="p-8 text-center bg-hard-panel/30 border border-hard-border rounded-xl text-hard-muted text-xs">
+                                Nenhum registro de feedback. Clique em "+ Novo Feedback" para registrar relatos de clientes.
+                            </div>
+                        ` : state.feedbacks.map((f, i) => `
+                            <div class="bg-hard-panel/50 border border-hard-border p-4 rounded-xl flex justify-between items-start gap-4 text-xs">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.priority === 'Alta' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}">${escapeHtml(f.priority)}</span>
+                                        <span class="text-white font-bold">${escapeHtml(f.category)}</span>
+                                    </div>
+                                    <p class="text-gray-300">${escapeHtml(f.problem)}</p>
+                                    <p class="text-hard-muted"><strong>Ação Proposta:</strong> ${escapeHtml(f.action)}</p>
+                                </div>
+                                <button onclick="deleteFeedback(${i})" class="text-red-400 hover:underline text-[11px]">Excluir</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function addFeedbackPrompt() {
+            const category = prompt('Categoria (Ex: Produto, Suporte, Checkout):') || 'Geral';
+            const problem = prompt('Relato do Cliente / Problema:') || 'Sem detalhes';
+            const action = prompt('Ação de Melhoria Proposta:') || 'Em análise';
+            const priority = prompt('Prioridade (Baixa, Média, Alta):') || 'Média';
+
+            state.feedbacks.push({ category, problem, action, priority });
+            saveState();
+            navigate('tools', {toolId: 'feedback_panel'});
+            showToast('Feedback cadastrado!');
+        }
+
+        function deleteFeedback(i) {
+            state.feedbacks.splice(i, 1);
+            saveState();
+            navigate('tools', {toolId: 'feedback_panel'});
+            showToast('Feedback excluído!');
+        }
+
+        // TOOL 7: PLANO DE 90 DIAS
+        function renderGrowth90Tool() {
+            const g = state.growth90;
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Ferramenta Módulo 11</span>
+                        <h3 class="text-xl font-bold text-white mt-1">Planejador de Escala em 90 Dias</h3>
+                        <p class="text-xs text-hard-muted mt-1">Defina suas metas estratégicas para o próximo trimestre com foco em gargalos reais.</p>
+                    </div>
+
+                    <form onsubmit="saveGrowth90Form(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Meta de Faturamento do Trimestre (R$)</label>
+                            <input type="number" id="g90-target" value="${g.targetRevenue || ''}" required placeholder="150000" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Gargalo Número 1 a Resolver nos 90 Dias</label>
+                            <input type="text" id="g90-bottleneck" value="${escapeHtml(g.mainBottleneck || '')}" placeholder="Ex: Baixa retenção de alunos após o 1º mês" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Métrica-Chave de Acompanhamento (KPI Primário)</label>
+                            <input type="text" id="g90-metric" value="${escapeHtml(g.keyMetric || '')}" placeholder="Ex: Taxa de Churn mensal < 3%" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-hard-muted mb-1">Plano de Ação Trimestral (3 Projetos Prioritários)</label>
+                            <textarea id="g90-plan" rows="4" placeholder="1. Reformular onboarding; 2. Lançar programa de indicação; 3. Testar novos criativos no Facebook Ads." class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">${escapeHtml(g.actionPlan || '')}</textarea>
+                        </div>
+
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition">
+                            Salvar Plano de 90 Dias
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function saveGrowth90Form(e) {
+            e.preventDefault();
+            state.growth90 = {
+                targetRevenue: parseFloat(document.getElementById('g90-target').value) || 0,
+                mainBottleneck: document.getElementById('g90-bottleneck').value,
+                keyMetric: document.getElementById('g90-metric').value,
+                actionPlan: document.getElementById('g90-plan').value
+            };
+            saveState();
+            showToast('Plano de 90 Dias salvo!');
+        }
+
+        // --- PAINEL DE MÉTRICAS VIEW ---
+        function renderMetricsView(container) {
+            const m = state.metrics;
+            const net = (m.revenue || 0) - (m.costs || 0) - (m.investment || 0) - (m.refunds || 0);
+
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Módulo 5 & Gestão</span>
+                        <h2 class="text-2xl font-black text-white mt-1">Painel Configurável de Métricas Reais</h2>
+                        <p class="text-xs text-hard-muted mt-1">Preencha os números oficiais da sua operação. Nenhum dado é inventado nesta plataforma.</p>
+                    </div>
+
+                    <form onsubmit="saveMetricsForm(event)" class="bg-hard-card border border-hard-border p-6 rounded-2xl space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Investimento Tráfego (R$)</label>
+                                <input type="number" id="m-inv" value="${m.investment || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Alcance / Impressões</label>
+                                <input type="number" id="m-reach" value="${m.reach || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Cliques Totais</label>
+                                <input type="number" id="m-clicks" value="${m.clicks || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Leads Gerados</label>
+                                <input type="number" id="m-leads" value="${m.leads || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Vendas Concluídas</label>
+                                <input type="number" id="m-sales" value="${m.sales || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Receita Bruta (R$)</label>
+                                <input type="number" id="m-rev" value="${m.revenue || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Custos Operacionais (R$)</label>
+                                <input type="number" id="m-costs" value="${m.costs || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Reembolsos / Devoluções (R$)</label>
+                                <input type="number" id="m-refunds" value="${m.refunds || ''}" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-hard-panel border border-hard-border rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+                            <div>
+                                <span class="text-hard-muted">Resultado Líquido Calculado:</span>
+                                <span class="text-base font-extrabold ${net >= 0 ? 'text-hard-neon' : 'text-red-400'} ml-2">R$ ${formatMoney(net)}</span>
+                            </div>
+                            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition">
+                                Atualizar Métricas Reais
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function saveMetricsForm(e) {
+            e.preventDefault();
+            state.metrics = {
+                investment: parseFloat(document.getElementById('m-inv').value) || 0,
+                reach: parseFloat(document.getElementById('m-reach').value) || 0,
+                clicks: parseFloat(document.getElementById('m-clicks').value) || 0,
+                leads: parseFloat(document.getElementById('m-leads').value) || 0,
+                sales: parseFloat(document.getElementById('m-sales').value) || 0,
+                revenue: parseFloat(document.getElementById('m-rev').value) || 0,
+                costs: parseFloat(document.getElementById('m-costs').value) || 0,
+                refunds: parseFloat(document.getElementById('m-refunds').value) || 0
+            };
+            saveState();
+            showToast('Métricas atualizadas!');
+            navigate('metrics');
+        }
+
+        // --- CRM COMERCIAL VIEW ---
+        function renderCRMView(container) {
+            const stages = ['Novo Lead', 'Qualificação', 'Proposta', 'Fechado', 'Perdido'];
+
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Módulo 7 & Vendas</span>
+                            <h2 class="text-2xl font-black text-white mt-1">CRM Comercial Local</h2>
+                            <p class="text-xs text-hard-muted mt-1">Gerencie oportunidades, próximos passos e motivos de perda.</p>
+                        </div>
+                        <button onclick="openLeadModal()" class="px-4 py-2.5 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition flex items-center gap-2">
+                            <span>+</span> Novo Lead / Contato
+                        </button>
+                    </div>
+
+                    <!-- Pipeline Board (Horizontal Scroll on Mobile) -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 overflow-x-auto pb-4">
+                        ${stages.map(stage => {
+                            const stageLeads = state.crmLeads.filter(l => l.stage === stage);
+                            return `
+                                <div class="bg-hard-card border border-hard-border rounded-2xl p-4 flex flex-col min-w-[220px]">
+                                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-hard-border">
+                                        <span class="text-xs font-bold text-white">${escapeHtml(stage)}</span>
+                                        <span class="text-[10px] font-bold bg-hard-panel text-hard-neon px-2 py-0.5 rounded-full">${stageLeads.length}</span>
+                                    </div>
+
+                                    <div class="space-y-3 flex-1 overflow-y-auto max-h-[500px]">
+                                        ${stageLeads.length === 0 ? `
+                                            <p class="text-[11px] text-hard-muted text-center py-4">Sem leads nesta etapa</p>
+                                        ` : stageLeads.map(lead => `
+                                            <div class="bg-hard-panel border border-hard-border p-3 rounded-xl space-y-2 relative group hover:border-hard-emerald/50 transition">
+                                                <div class="flex justify-between items-start">
+                                                    <span class="font-bold text-xs text-white truncate">${escapeHtml(lead.name)}</span>
+                                                    <span class="text-[10px] text-hard-neon font-bold">R$ ${formatMoney(lead.value || 0)}</span>
+                                                </div>
+                                                <p class="text-[11px] text-hard-muted"><strong>Origem:</strong> ${escapeHtml(lead.source)}</p>
+                                                <p class="text-[11px] text-hard-muted"><strong>Próx. Ação:</strong> ${escapeHtml(lead.nextAction || 'Não agendada')}</p>
+
+                                                <div class="pt-2 border-t border-hard-border/50 flex justify-between items-center text-[10px]">
+                                                    <button onclick="moveLeadPrompt('${lead.id}')" class="text-hard-neon hover:underline">Mover →</button>
+                                                    <button onclick="deleteLead('${lead.id}')" class="text-red-400 hover:underline">Excluir</button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <!-- LEAD MODAL -->
+                <div id="lead-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-hard-card border border-hard-border p-6 rounded-2xl max-w-md w-full space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-white">Cadastrar Novo Lead</h3>
+                            <button onclick="closeLeadModal()" class="text-hard-muted hover:text-white">✕</button>
+                        </div>
+                        <form onsubmit="saveLeadForm(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block text-hard-muted mb-1">Nome do Contato / Empresa</label>
+                                <input type="text" id="ld-name" required class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Origem (Ex: Anúncio Meta, Indicação)</label>
+                                <input type="text" id="ld-source" required class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Valor Estimado (R$)</label>
+                                <input type="number" id="ld-value" placeholder="1000" class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Etapa Comercial Inicial</label>
+                                <select id="ld-stage" class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                                    <option value="Novo Lead">Novo Lead</option>
+                                    <option value="Qualificação">Qualificação</option>
+                                    <option value="Proposta">Proposta</option>
+                                    <option value="Fechado">Fechado</option>
+                                    <option value="Perdido">Perdido</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Próxima Ação e Data</label>
+                                <input type="text" id="ld-action" placeholder="Ex: Enviar proposta até amanhã 14h" class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-hard-emerald hover:bg-hard-neon text-black font-bold rounded-xl transition mt-2">
+                                Salvar Lead no CRM
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openLeadModal() { document.getElementById('lead-modal').classList.remove('hidden'); }
+        function closeLeadModal() { document.getElementById('lead-modal').classList.add('hidden'); }
+
+        function saveLeadForm(e) {
+            e.preventDefault();
+            const lead = {
+                id: 'lead_' + Date.now(),
+                name: document.getElementById('ld-name').value,
+                source: document.getElementById('ld-source').value,
+                value: parseFloat(document.getElementById('ld-value').value) || 0,
+                stage: document.getElementById('ld-stage').value,
+                nextAction: document.getElementById('ld-action').value
+            };
+            state.crmLeads.push(lead);
+            saveState();
+            closeLeadModal();
+            showToast('Lead cadastrado no CRM!');
+            navigate('crm');
+        }
+
+        function moveLeadPrompt(id) {
+            const lead = state.crmLeads.find(l => l.id === id);
+            if (!lead) return;
+            const newStage = prompt('Mover para qual etapa?\n(Novo Lead, Qualificação, Proposta, Fechado, Perdido):', lead.stage);
+            if (newStage && ['Novo Lead', 'Qualificação', 'Proposta', 'Fechado', 'Perdido'].includes(newStage)) {
+                lead.stage = newStage;
+                saveState();
+                navigate('crm');
+                showToast('Lead movido com sucesso!');
+            }
+        }
+
+        function deleteLead(id) {
+            state.crmLeads = state.crmLeads.filter(l => l.id !== id);
+            saveState();
+            navigate('crm');
+            showToast('Lead excluído.');
+        }
+
+        // --- DRE & FINANÇAS VIEW ---
+        function renderFinanceView(container) {
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Módulo 9 & Finanças</span>
+                        <h2 class="text-2xl font-black text-white mt-1">Simulador Financeiro & DRE Operacional</h2>
+                        <p class="text-xs text-hard-muted mt-1">Calcule a margem de contribuição, despesas fixas e o ponto de equilíbrio (Break-even).</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Inputs -->
+                        <div class="bg-hard-card border border-hard-border p-6 rounded-2xl space-y-4">
+                            <h3 class="text-sm font-bold text-white">Parâmetros do Mês</h3>
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Faturamento Bruto Esperado (R$)</label>
+                                <input type="number" id="fin-rev" oninput="runFinSim()" placeholder="50000" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-hard-muted mb-1">Impostos (%)</label>
+                                    <input type="number" id="fin-tax" oninput="runFinSim()" placeholder="6" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-hard-muted mb-1">Taxas Gateway (%)</label>
+                                    <input type="number" id="fin-gate" oninput="runFinSim()" placeholder="5" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Investimento em Tráfego Pago (R$)</label>
+                                <input type="number" id="fin-ad" oninput="runFinSim()" placeholder="10000" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-hard-muted mb-1">Despesas Fixas Totais (Equipe, Ferramentas, Pró-labore R$)</label>
+                                <input type="number" id="fin-fix" oninput="runFinSim()" placeholder="12000" class="w-full bg-hard-panel border border-hard-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-hard-emerald">
+                            </div>
+                        </div>
+
+                        <!-- DRE Output -->
+                        <div class="bg-hard-card border border-hard-border p-6 rounded-2xl flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-white mb-4">Demonstrativo de Resultado Simulado (DRE)</h3>
+                                
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between p-2 bg-hard-panel/40 rounded">
+                                        <span class="text-hard-muted">(+) Receita Bruta</span>
+                                        <span id="dre-rev" class="font-bold text-white">R$ 0,00</span>
+                                    </div>
+                                    <div class="flex justify-between p-2 bg-hard-panel/40 rounded">
+                                        <span class="text-hard-muted">(-) Impostos e Taxas</span>
+                                        <span id="dre-tax" class="text-red-400">R$ 0,00</span>
+                                    </div>
+                                    <div class="flex justify-between p-2 bg-hard-panel/40 rounded">
+                                        <span class="text-hard-muted">(-) Tráfego Pago</span>
+                                        <span id="dre-ad" class="text-red-400">R$ 0,00</span>
+                                    </div>
+                                    <div class="flex justify-between p-2 bg-hard-panel/60 rounded font-bold border-t border-hard-border">
+                                        <span class="text-white font-bold">(=) Margem de Contribuição</span>
+                                        <span id="dre-margin" class="text-hard-neon">R$ 0,00</span>
+                                    </div>
+                                    <div class="flex justify-between p-2 bg-hard-panel/40 rounded">
+                                        <span class="text-hard-muted">(-) Despesas Fixas</span>
+                                        <span id="dre-fix" class="text-red-400">R$ 0,00</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-hard-panel rounded-xl font-extrabold text-sm border border-hard-border mt-3">
+                                        <span class="text-white">(=) Lucro Líquido Real</span>
+                                        <span id="dre-net" class="text-hard-neon">R$ 0,00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-4 border-t border-hard-border">
+                                <span class="text-[11px] text-hard-muted block">Ponto de Equilíbrio (Break-even):</span>
+                                <span id="dre-break" class="text-lg font-bold text-amber-400">R$ 0,00 / mês</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
+        function runFinSim() {
+            const rev = parseFloat(document.getElementById('fin-rev').value) || 0;
+            const taxPct = parseFloat(document.getElementById('fin-tax').value) || 0;
+            const gatePct = parseFloat(document.getElementById('fin-gate').value) || 0;
+            const ad = parseFloat(document.getElementById('fin-ad').value) || 0;
+            const fix = parseFloat(document.getElementById('fin-fix').value) || 0;
+
+            const taxVal = rev * ((taxPct + gatePct) / 100);
+            const marginVal = rev - taxVal - ad;
+            const netVal = marginVal - fix;
+            
+            const marginRatio = rev > 0 ? (marginVal / rev) : 0;
+            const breakEven = marginRatio > 0 ? (fix / marginRatio) : 0;
+
+            document.getElementById('dre-rev').innerText = 'R$ ' + formatMoney(rev);
+            document.getElementById('dre-tax').innerText = '- R$ ' + formatMoney(taxVal);
+            document.getElementById('dre-ad').innerText = '- R$ ' + formatMoney(ad);
+            document.getElementById('dre-margin').innerText = 'R$ ' + formatMoney(marginVal);
+            document.getElementById('dre-fix').innerText = '- R$ ' + formatMoney(fix);
+            document.getElementById('dre-net').innerText = 'R$ ' + formatMoney(netVal);
+            document.getElementById('dre-break').innerText = 'R$ ' + formatMoney(breakEven) + ' em faturamento';
+        }
+
+        // --- SOPs & PROCESSOS VIEW ---
+        function renderProcessesView(container) {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Módulo 10 & Operação</span>
+                            <h2 class="text-2xl font-black text-white mt-1">Biblioteca de SOPs (Procedimentos Padrão)</h2>
+                        </div>
+                        <button onclick="openSOPModal()" class="px-4 py-2.5 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition">+ Criar Novo SOP</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${state.processes.length === 0 ? `
+                            <div class="p-8 text-center bg-hard-card border border-hard-border rounded-2xl text-hard-muted text-xs">
+                                Nenhum procedimento documentado. Clique em "+ Criar Novo SOP" para criar seu primeiro manual operacional.
+                            </div>
+                        ` : state.processes.map((proc, idx) => `
+                            <div class="bg-hard-card border border-hard-border p-5 rounded-2xl space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase bg-hard-emerald/20 text-hard-neon px-2 py-0.5 rounded">${escapeHtml(proc.responsible)}</span>
+                                        <h3 class="text-base font-bold text-white mt-1">${escapeHtml(proc.name)}</h3>
+                                    </div>
+                                    <button onclick="deleteSOP(${idx})" class="text-red-400 hover:underline text-xs">Excluir</button>
+                                </div>
+                                <p class="text-xs text-hard-muted"><strong>Objetivo:</strong> ${escapeHtml(proc.obj)}</p>
+                                <div class="bg-hard-panel p-3 rounded-xl border border-hard-border text-xs text-gray-300">
+                                    <strong>Passo a Passo:</strong>
+                                    <p class="whitespace-pre-line mt-1">${escapeHtml(proc.steps)}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- SOP MODAL -->
+                <div id="sop-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-hard-card border border-hard-border p-6 rounded-2xl max-w-lg w-full space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-white">Criar Procedimento Operacional (SOP)</h3>
+                            <button onclick="closeSOPModal()" class="text-hard-muted hover:text-white">✕</button>
+                        </div>
+                        <form onsubmit="saveSOPForm(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block text-hard-muted mb-1">Nome do Processo</label>
+                                <input type="text" id="sop-name" required placeholder="Ex: Subida e Otimização de Anúncios na Meta Ads" class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Responsável pela Execução</label>
+                                <input type="text" id="sop-resp" required placeholder="Ex: Gestor de Tráfego / Carlos" class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Objetivo Claro</label>
+                                <input type="text" id="sop-obj" required placeholder="Ex: Garantir que nenhum anúncio seja ativado sem link utm correto" class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-hard-muted mb-1">Passo a Passo Detalhado</label>
+                                <textarea id="sop-steps" rows="4" required placeholder="1. Abrir o Gerenciador; 2. Selecionar o público A; 3. Inserir a URL com UTM..." class="w-full bg-hard-panel border border-hard-border rounded-xl p-2.5 text-white"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-hard-emerald hover:bg-hard-neon text-black font-bold rounded-xl transition mt-2">
+                                Salvar SOP na Biblioteca
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openSOPModal() { document.getElementById('sop-modal').classList.remove('hidden'); }
+        function closeSOPModal() { document.getElementById('sop-modal').classList.add('hidden'); }
+
+        function saveSOPForm(e) {
+            e.preventDefault();
+            const sop = {
+                name: document.getElementById('sop-name').value,
+                responsible: document.getElementById('sop-resp').value,
+                obj: document.getElementById('sop-obj').value,
+                steps: document.getElementById('sop-steps').value
+            };
+            state.processes.push(sop);
+            saveState();
+            closeSOPModal();
+            showToast('SOP documentado!');
+            navigate('processes');
+        }
+
+        function deleteSOP(idx) {
+            state.processes.splice(idx, 1);
+            saveState();
+            navigate('processes');
+            showToast('SOP removido.');
+        }
+
+        // --- PLANO DE EXECUÇÃO 30 DIAS VIEW ---
+        function renderRoadmapView(container) {
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Módulo 12 & Execução</span>
+                        <h2 class="text-2xl font-black text-white mt-1">Plano de Execução HARD em 30 Dias</h2>
+                        <p class="text-xs text-hard-muted mt-1">Roteiro diário dividido em 4 semanas para estruturar, medir e otimizar a sua operação.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        ${[1, 2, 3, 4].map(weekNum => `
+                            <div class="bg-hard-card border border-hard-border rounded-2xl p-6 space-y-4">
+                                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                    <span class="text-hard-neon">Semana ${weekNum}:</span>
+                                    <span>${weekNum === 1 ? 'Diagnóstico Operacional' : weekNum === 2 ? 'Estruturação & Processos' : weekNum === 3 ? 'Experimentos Controlados' : 'Otimização & Próximo Ciclo'}</span>
+                                </h3>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+                                    ${[1, 2, 3, 4, 5, 6, 7].map(dayOffset => {
+                                        const dayNum = (weekNum - 1) * 7 + dayOffset;
+                                        if (dayNum > 30) return '';
+                                        const dayKey = 'day_' + dayNum;
+                                        const dayData = state.execution30[dayKey] || { done: false, result: '' };
+
+                                        return `
+                                            <div class="bg-hard-panel border border-hard-border p-3 rounded-xl flex flex-col justify-between space-y-2 text-xs">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-white">Dia ${dayNum}</span>
+                                                    <input type="checkbox" ${dayData.done ? 'checked' : ''} onchange="toggleDayExecution(${dayNum})" class="rounded bg-hard-bg border-hard-border text-hard-emerald">
+                                                </div>
+                                                <input type="text" value="${escapeHtml(dayData.result || '')}" onblur="saveDayResult(${dayNum}, this.value)" placeholder="Anotação / Log..." class="w-full bg-hard-bg border border-hard-border rounded p-1 text-[11px] text-white focus:outline-none focus:border-hard-emerald">
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleDayExecution(dayNum) {
+            const key = 'day_' + dayNum;
+            if (!state.execution30[key]) state.execution30[key] = { done: false, result: '' };
+            state.execution30[key].done = !state.execution30[key].done;
+            saveState();
+            showToast(`Dia ${dayNum} atualizado!`);
+        }
+
+        function saveDayResult(dayNum, text) {
+            const key = 'day_' + dayNum;
+            if (!state.execution30[key]) state.execution30[key] = { done: false, result: '' };
+            state.execution30[key].result = text;
+            saveState();
+        }
+
+        // --- CADERNO DE ANOTAÇÕES GLOBAL ---
+        function renderNotesView(container) {
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Anotações Estratégicas</span>
+                        <h2 class="text-2xl font-black text-white mt-1">Caderno de Anotações da Mentoria</h2>
+                        <p class="text-xs text-hard-muted mt-1">Central de insights e apontamentos das suas aulas.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${Object.keys(state.lessonNotes).length === 0 ? `
+                            <div class="p-8 text-center bg-hard-card border border-hard-border rounded-2xl text-hard-muted text-xs">
+                                Nenhuma anotação individual de aula registrada até o momento.
+                            </div>
+                        ` : Object.entries(state.lessonNotes).map(([lessonId, text]) => `
+                            <div class="bg-hard-card border border-hard-border p-5 rounded-2xl space-y-2 text-xs">
+                                <span class="font-bold text-hard-neon uppercase">${escapeHtml(lessonId)}</span>
+                                <p class="text-white whitespace-pre-line">${escapeHtml(text)}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- BACKUP & EXPORTAÇÃO VIEW ---
+        function renderBackupView(container) {
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-hard-neon tracking-wider">Gestão de Dados</span>
+                        <h2 class="text-2xl font-black text-white mt-1">Backup, Exportação e Importação</h2>
+                        <p class="text-xs text-hard-muted mt-1">Seus dados ficam exclusivamente salvos no navegador. Faça downloads periódicos de segurança.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <div class="bg-hard-card border border-hard-border p-6 rounded-2xl space-y-4">
+                            <h3 class="text-sm font-bold text-white">Exportar Dados (Backup JSON)</h3>
+                            <p class="text-xs text-hard-muted">Baixe um arquivo contendo todas as suas anotações, contatos do CRM, SOPs e métricas.</p>
+                            <button onclick="exportDataJSON()" class="px-6 py-3 bg-gradient-to-r from-hard-darkEmerald to-hard-emerald text-black text-xs font-bold rounded-xl hover:opacity-90 transition w-full">
+                                Baixar Backup do Sistema (.json)
+                            </button>
+                        </div>
+
+                        <div class="bg-hard-card border border-hard-border p-6 rounded-2xl space-y-4">
+                            <h3 class="text-sm font-bold text-white">Importar Dados Restaurados</h3>
+                            <p class="text-xs text-hard-muted">Selecione um arquivo de backup (.json) para restaurar no navegador.</p>
+                            <input type="file" id="import-file" accept=".json" class="block w-full text-xs text-hard-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-hard-panel file:text-white hover:file:bg-hard-border">
+                            <button onclick="importDataJSON()" class="px-6 py-3 bg-hard-panel border border-hard-border hover:border-hard-emerald text-white text-xs font-bold rounded-xl transition w-full">
+                                Restaurar do Arquivo
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `HARD_MENTORIA_BACKUP_${Date.now()}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast('Backup baixado com sucesso!');
+        }
+
+        function importDataJSON() {
+            const fileInput = document.getElementById('import-file');
+            if (!fileInput.files.length) {
+                alert('Selecione um arquivo JSON de backup.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    if (importedState.studentName !== undefined) {
+                        state = importedState;
+                        saveState();
+                        showToast('Dados restaurados!');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        alert('Arquivo de backup inválido.');
+                    }
+                } catch(err) {
+                    alert('Erro ao ler o arquivo de backup.');
+                }
+            };
+            reader.readAsText(fileInput.files[0]);
+        }
+
+        /* ==========================================================================
+           5. EVENT HANDLERS & HELPERS
+           ========================================================================== */
+        function handleOnboarding(e) {
+            e.preventDefault();
+            const name = document.getElementById('student-name').value.trim();
+            if (!name) return;
+
+            state.studentName = name;
+            state.onboarded = true;
+            saveState();
+
+            document.getElementById('welcome-modal').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+
+            document.getElementById('nav-student-name').innerText = name;
+            navigate('dashboard');
+            showToast(`Bem-vindo à HARD, ${name}!`);
+        }
+
+        function toggleLessonCompletion(lessonId) {
+            const idx = state.completedLessons.indexOf(lessonId);
+            if (idx > -1) {
+                state.completedLessons.splice(idx, 1);
+                showToast('Aula desmarcada.');
+            } else {
+                state.completedLessons.push(lessonId);
+                showToast('Aula concluída!');
+            }
+            saveState();
+            // Re-render current view
+            const activeMod = MODULES.find(m => m.lessons.some(l => l.id === lessonId));
+            navigate('modules', { moduleId: activeMod ? activeMod.id : 1, lessonId });
+        }
+
+        function saveLessonNote(lessonId) {
+            const input = document.getElementById('lesson-note-input');
+            if (!input) return;
+            state.lessonNotes[lessonId] = input.value;
+            saveState();
+            showToast('Anotação salva!');
+        }
+
+        function addGoalPrompt() {
+            const text = prompt('Descrição da Meta Semanal:');
+            if (text) {
+                state.goals.push({ id: Date.now(), text, done: false });
+                saveState();
+                navigate('dashboard');
+                showToast('Meta adicionada!');
+            }
+        }
+
+        function toggleGoal(id) {
+            const goal = state.goals.find(g => g.id === id);
+            if (goal) {
+                goal.done = !goal.done;
+                saveState();
+                navigate('dashboard');
+            }
+        }
+
+        function deleteGoal(id) {
+            state.goals = state.goals.filter(g => g.id !== id);
+            saveState();
+            navigate('dashboard');
+            showToast('Meta excluída.');
+        }
+
+        function resetDataPrompt() {
+            if (confirm('Atenção: Deseja realmente apagar todos os seus dados locais e reiniciar a plataforma?')) {
+                localStorage.removeItem(APP_KEY);
+                location.reload();
+            }
+        }
+
+        function updateGlobalProgressUI() {
+            const totalLessons = MODULES.reduce((acc, m) => acc + m.lessons.length, 0);
+            const completedCount = state.completedLessons.length;
+            const pct = Math.round((completedCount / totalLessons) * 100) || 0;
+
+            const textEl = document.getElementById('sidebar-progress-text');
+            const barEl = document.getElementById('sidebar-progress-bar');
+            if (textEl) textEl.innerText = pct + '%';
+            if (barEl) barEl.style.width = pct + '%';
+        }
+
+        function formatMoney(val) {
+            return (val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        /* ==========================================================================
+           6. INITIALIZATION
+           ========================================================================== */
+        window.onload = function() {
+            if (state.onboarded && state.studentName) {
+                document.getElementById('welcome-modal').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('nav-student-name').innerText = state.studentName;
+                updateGlobalProgressUI();
+                navigate('dashboard');
+            } else {
+                document.getElementById('welcome-modal').classList.remove('hidden');
+            }
+        };
+    </script>
+</body>
+</html>
